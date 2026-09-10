@@ -1,0 +1,34 @@
+@import "tailwindcss";
+@import "../styles/contact.css";
+
+/* Plain `@theme`, NOT `@theme inline`.
+   A non-inline @theme emits the custom property into :root AND generates the
+   utility. `@theme inline` only generates the utility — and contact.css reads
+   var(--font-display) / var(--color-ink) directly, so we need both. */
+@theme {
+  --font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter Tight Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-page: #ffffff;
+  --color-ink: #000000;
+  --color-feedback: rgb(242, 242, 242);
+  --color-muted: rgba(0, 0, 0, 0.3);
+  --color-idle: rgba(0, 0, 0, 0.2);
+  --color-hairline: rgba(0, 0, 0, 0.1);
+  --color-invalid: rgb(249, 43, 21);
+}
+
+/* Notes for whoever picks this up next:
+
+   - There is deliberately no `prefers-color-scheme: dark` block. This design
+     is white-only; a dark override would invert the form panel and make the
+     browser render the native date picker and checkbox chrome dark.
+     layout.tsx declares `colorScheme: "light"` to match.
+
+   - Tailwind v4 emits its utilities inside `@layer utilities`. contact.css is
+     unlayered, and unlayered CSS beats any @layer regardless of source order,
+     so the reference rules can never be clobbered by a stray utility.
+
+   - Tailwind's Preflight already applies most of the resets the reference
+     design does by hand (border: 0, color: inherit, font: inherit on form
+     controls), which is why contact.css only re-states the ones that matter. */
