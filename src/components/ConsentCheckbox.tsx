@@ -28,7 +28,7 @@ export function ConsentCheckbox({ checked, invalid, error, onChange }: Props) {
         {CONSENT_TEXT}
       </span>
       {error ? (
-        <span id="consent-error" className="vi-sr-only">
+        <span id="consent-error" className="sr-only">
           {error}
         </span>
       ) : null}

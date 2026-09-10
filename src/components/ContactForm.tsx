@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useActionState, useRef, useState } from "react";
 import { submitContact } from "@/app/actions";
 import { ConsentCheckbox } from "./ConsentCheckbox";
@@ -141,8 +140,8 @@ export function ContactForm() {
           );
         })}
 
-        <div className="contact__feedback-footer">
-          <div className="contact__feedback-consent">
+        <div className="col-span-full mt-8 flex w-full flex-col items-start justify-between gap-10 pb-16 md:mt-12 md:flex-row md:pb-24 lg:pb-32">
+          <div className="flex flex-col gap-3">
             <ConsentCheckbox
               checked={consent}
               invalid={Boolean(errorFor("consent"))}
@@ -154,26 +153,47 @@ export function ContactForm() {
             />
             <span role="status" aria-live="polite">
               {state.message && !state.ok ? (
-                <span className="contact__feedback-status">{state.message}</span>
+                <span className="block font-body text-legal text-invalid">
+                  {state.message}
+                </span>
               ) : null}
             </span>
           </div>
 
+          {/* The arrow is inlined rather than loaded through next/image so the
+              glyph can ride `currentColor` through the hover transition — an
+              <img> cannot. Hover is ink -> bronze, not a fade: dimming ink on
+              a warm ground goes muddy. `min-w-[4.4em]` pins the arrow across
+              the SEND -> SENDING swap (2.473em -> 4.131em in Valturin). */}
           <button
             ref={sendRef}
             type="submit"
-            className="contact__feedback-send"
+            className="group ms-auto flex shrink-0 items-center gap-5 font-display text-send uppercase text-ink transition-colors duration-300 hover:text-bronze disabled:cursor-progress disabled:text-idle"
             disabled={pending}
           >
-            <span>{pending ? "Sending" : "Send"}</span>
-            <Image
-              className="contact__feedback-icon"
-              src="/icons/arrow-right.svg"
-              alt=""
-              width={168}
-              height={168}
-              priority
-            />
+            <span className="inline-block min-w-[4.4em] text-right me-[-0.14em] max-md:sr-only">
+              {pending ? "Sending" : "Send"}
+            </span>
+            <svg
+              viewBox="0 0 168 168"
+              fill="none"
+              aria-hidden="true"
+              className="size-[5.625rem] shrink-0 transition-transform duration-200 group-hover:translate-x-1 lg:size-[7.875rem] 3xl:size-[10.5rem]"
+            >
+              <circle
+                cx="84"
+                cy="84"
+                r="83"
+                stroke="var(--color-bronze)"
+                strokeWidth="1"
+              />
+              <path
+                d="M60 84h48M92 68l16 16-16 16"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="square"
+              />
+            </svg>
           </button>
         </div>
       </form>

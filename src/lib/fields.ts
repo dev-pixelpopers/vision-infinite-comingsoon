@@ -84,4 +84,4 @@ export const EMPTY_VALUES = Object.fromEntries(
 ) as Record<FieldName, string>;
 
 export const CONSENT_TEXT =
-  "I consent for the information submitted above to be recorded and stored for the purposes of providing services relating to my inquiry. I agree that registration on or use of the Vision Infinite site constitutes agreement to its User Agreement & Privacy Policy";
+  "I consent for the information submitted above to be recorded and stored for the purposes of providing services relating to my inquiry. I agree that registration on or use of the Vision infinie site constitutes agreement to its User Agreement & Privacy Policy";

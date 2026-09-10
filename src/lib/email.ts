@@ -32,7 +32,7 @@ const escapeHtml = (v: string) =>
 export function buildPlainText(data: ContactInput): string {
   const lines = ROWS.map(([label, key]) => `${label}: ${show(data[key])}`);
   lines.push("", "Consent: given", `Submitted: ${new Date().toISOString()}`);
-  return `New enquiry — Vision Infinite\n\n${lines.join("\n")}\n`;
+  return `New enquiry — Vision infinie\n\n${lines.join("\n")}\n`;
 }
 
 export function buildHtml(data: ContactInput): string {

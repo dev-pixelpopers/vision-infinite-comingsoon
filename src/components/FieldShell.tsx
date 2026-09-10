@@ -86,7 +86,7 @@ export function FieldShell({
           lives here for assistive tech and the red hairline carries it
           visually. */}
       {error ? (
-        <span id={`${id}-error`} className="vi-sr-only">
+        <span id={`${id}-error`} className="sr-only">
           {error}
         </span>
       ) : null}

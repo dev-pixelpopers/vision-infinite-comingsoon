@@ -1,79 +1,87 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Vision Infinite — Coming Soon / Contact
+   Vision infinie — Coming Soon / Contact
 
-   Layout, type scale and interaction reproduced from the reference design.
-   Desktop-first: breakpoints are max-width 1919 / 1439 / 1279 / 1023 / 767.
+   Hybrid: Tailwind utilities carry layout, spacing, colour and type in the
+   JSX; this file carries only what a utility cannot express — @font-face,
+   selectors rooted on html[data-loading] / html[data-loaded], the state
+   classes React sets on the fields, and pseudo-elements with interpolated
+   geometry. Tokens live in @theme in globals.css and are readable here as
+   plain custom properties, because that @theme is non-inline.
 
-   Plain CSS rather than Tailwind utilities on purpose — five desktop-first
-   max-width breakpoints plus font-variation-settings on a dozen selectors
-   would be five stacked arbitrary variants per element for zero benefit.
-   Tailwind still owns the token layer (@theme in globals.css) and Preflight.
+   Mobile-first. Min-width only. There are two breakpoints in this file
+   (64rem and 90rem) plus two `(hover: hover)` feature queries; everything
+   else that used to be a breakpoint is a clamp(). Do not reintroduce a
+   max-width query — mixing the two directions is what produced the old
+   title-size inversion between 1440 and 1919.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    FONT SWAP POINT
 
-   "Archivo Variable" (display) and "Inter Tight Variable" (body) are
-   TEMPORARY stand-ins served from Google Fonts.
+   Both families are self-hosted from public/assets/fonts/ and declared here
+   by hand rather than through next/font — deliberately, so a licensed face
+   drops in by changing ONE src: url() line and nothing else moves.
 
-   When the licensed Vision Infinite typefaces arrive:
-     1. Drop the .woff2 files into  public/fonts/
-     2. Replace ONLY the src: url(...) lines below, e.g.
-          src: url("/fonts/VI-Display.woff2") format("woff2-variations");
-        and delete the latin-ext blocks if your file is not subset-split.
-     3. Leave the font-family names, the font-weight: 100 900 range,
-        font-display: swap and unicode-range alone. Every rule in this file
-        resolves through var(--font-display) / var(--font-body), so nothing
-        else needs to change.
-     4. IF THE LICENSED FACE IS NOT VARIABLE, font-variation-settings
-        silently does nothing. Every rule below therefore ALSO declares a
-        matching font-weight, so a static family snaps to its nearest named
-        weight instead of collapsing to 400. Keep the two in sync.
-     5. In layout.tsx, swap the fonts.gstatic.com <link rel="preconnect">
-        for <link rel="preload" as="font" type="font/woff2" crossOrigin="">.
+     --font-display   "Valturin"   the brand display face
+     --font-body      "Jost"       SIL OFL 1.1, variable, wght 300..600
+
+   ── VALTURIN IS NOT A VARIABLE FONT ──────────────────────────────────────
+   Parsed from the woff2: no fvar table, usWeightClass 400, 338 glyphs,
+   unitsPerEm 1000, cap 727, x-height 519, asc 758 / desc -234.
+   GSUB: aalt dlig frac liga ordn salt ss01..ss04 sups.  GPOS: kern only.
+
+   Consequences, all of which this file now respects:
+
+     * font-weight is 400 here, NOT a 100..900 range. Declaring a range the
+       file cannot serve is what made the browser synthesise fake bold at
+       font-weight: 640 — which smears the serifs on a display face.
+     * There is not one font-variation-settings declaration in this file, and
+       there must never be. They were silent no-ops.
+     * The entire hierarchy is built from SIZE, CASE, LETTER-SPACING and
+       COLOUR. If you find yourself reaching for weight, reach for a
+       stylistic set (ss01..ss04) or a tracking step instead.
+     * There is no `tnum`, and the digits are proportional ("1" = 348 units,
+       "0" = 685). font-variant-numeric does nothing. Anything that counts
+       needs a fixed-width box — see .preloader__percent.
+     * Uppercase glyphs average 0.639em. Re-measure before trusting any
+       em-based max-width in this file if the face changes.
+
+   To swap the display face:
+     1. Drop the .woff2 into public/assets/fonts/.
+     2. Change the src: url() below.
+     3. Update the <link rel="preload"> href in src/app/layout.tsx to match.
+     4. Only if the new face IS variable, widen font-weight here — and only
+        then is it safe to use more than one weight in the type scale.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── DISPLAY / HEADINGS — Archivo Variable (wght 100..900) ───────────────── */
+/* ── DISPLAY — Valturin, one static weight ───────────────────────────────── */
 @font-face {
-  font-family: "Archivo Variable";
+  font-family: "Valturin";
   font-style: normal;
-  font-weight: 100 900;
-  font-stretch: 100%;
+  font-weight: 400;
   font-display: swap;
-  src: url("https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLydOxI.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "Archivo Variable";
-  font-style: normal;
-  font-weight: 100 900;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url("https://fonts.gstatic.com/s/archivo/v25/k3kPo8UDI-1M0wlSV9XAw6lQkqWY8Q82sLyTOxK-vA.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
-    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
-    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("/assets/fonts/Valturin-Regular.woff2") format("woff2");
 }
 
-/* ── BODY / DESCRIPTION — Inter Tight Variable (wght 100..900) ───────────── */
+/* ── BODY — Jost Variable, latin + latin-ext ─────────────────────────────
+   Fetched from the Google Fonts css2 endpoint and self-hosted; the weight
+   range and unicode-ranges below are copied verbatim from that response. ── */
 @font-face {
-  font-family: "Inter Tight Variable";
+  font-family: "Jost";
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 300 600;
   font-display: swap;
-  src: url("https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsH8ag.woff2") format("woff2");
+  src: url("/assets/fonts/Jost-Variable-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: "Inter Tight Variable";
+  font-family: "Jost";
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 300 600;
   font-display: swap;
-  src: url("https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsJ8ah8QA.woff2") format("woff2");
+  src: url("/assets/fonts/Jost-Variable-latin-ext.woff2") format("woff2");
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
     U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
     U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
@@ -83,11 +91,17 @@
    BASE
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Both rules here are load-bearing for the preloader's mix-blend-mode.
-   html needs its own background so body's is not propagated to the root
-   canvas (a propagated background is not part of any blend group backdrop),
-   and isolation: isolate forces body to BE that blend group root. Without
-   them the preloader renders as a blank white screen with invisible text. */
+/* Both rules below are load-bearing, for two different reasons:
+
+   html's background paints the overscroll / rubber-band gutter bone rather
+   than browser white, and
+
+   body's `isolation: isolate` defines the blending group for the hero logo's
+   `mix-blend-multiply`. The logo PNG has an opaque #fff ground; multiply
+   knocks it out against the bone page (multiply(white, bone) === bone) while
+   the dark engraved strokes survive. Do NOT add `isolation` to any element
+   between body and that image — it would isolate the logo from the bone
+   backdrop and composite it against transparent black instead. */
 html {
   background: var(--color-page);
 }
@@ -96,8 +110,8 @@ body {
   background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-size: 12px;
-  line-height: 1.2;
+  font-size: 1rem;
+  line-height: 1.5;
   isolation: isolate;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -108,19 +122,6 @@ html[data-loading],
 html[data-loading] body {
   overflow: hidden;
   height: 100%;
-}
-
-/* Visually-hidden helper, for a11y text this design hides visually. */
-.vi-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -144,38 +145,24 @@ html[data-loaded] .reveal {
   transform: translateY(0);
 }
 
-html[data-loaded] .contact__title-wrap:nth-of-type(2) .reveal { transition-delay: 0.09s; }
-html[data-loaded] .contact__links > *:nth-child(1) .reveal { transition-delay: 0.18s; }
-html[data-loaded] .contact__links > *:nth-child(2) .reveal { transition-delay: 0.22s; }
-html[data-loaded] .contact__hero-text .reveal { transition-delay: 0.26s; }
+html[data-loaded] .hero__title > *:nth-child(1) .reveal { transition-delay: 0.06s; }
+html[data-loaded] .hero__title > *:nth-child(2) .reveal { transition-delay: 0.14s; }
+html[data-loaded] .hero__lead .reveal { transition-delay: 0.22s; }
+html[data-loaded] .hero__links > *:nth-child(1) .reveal { transition-delay: 0.3s; }
+html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34s; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PRELOADER
-   A white overlay over a white page with mix-blend-mode: difference renders
-   as a BLACK screen with WHITE text. White-on-white means the html/body
-   rules above have been lost.
-   ═══════════════════════════════════════════════════════════════════════════ */
+   The source video is an illustration on an opaque WHITE ground, so the
+   overlay is bone and the video is multiplied — exactly the same trick the
+   hero logo uses. multiply(white, bone) === bone, so the white plate
+   dissolves into the page and only the drawing remains; the letterbox bars
+   object-fit: contain always exposes become invisible too.
 
-/* Opaque cover that sits BENEATH the preloader (and outside its blend group).
-   Without it, `difference` inverts the real page instead of producing a flat
-   black field — you would see the form showing through in negative. With a
-   uniform white backdrop, difference(white, white) = black and the black
-   wordmark/counter come out white. */
-.page-alpfa {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  background: var(--color-page);
-  z-index: 98;
-  pointer-events: none;
-  transition: opacity 0.3s linear;
-}
-.page-alpfa.hide {
-  opacity: 0;
-  visibility: hidden;
-}
+   Bone rather than a dark ground also means the hand-off to the page is a
+   straight lift with no colour flash, and it keeps the counter legible
+   without fighting whatever frame is on screen.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 .preloader {
   position: fixed;
@@ -185,295 +172,176 @@ html[data-loaded] .contact__hero-text .reveal { transition-delay: 0.26s; }
   width: 100%;
   height: 100vh;
   height: 100dvh;
+  /* Also the letterbox bars, and the pre-decode ground before the first
+     frame paints — so there is never a white flash. */
   background: var(--color-page);
+  /* Contains the video's multiply so it blends against this element's bone
+     background and never reaches through to the page beneath. */
+  isolation: isolate;
   z-index: 9999;
-  mix-blend-mode: difference;
   transform: translateY(0);
   transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-.preloader--leaving { transform: translateY(-100%); }
-.preloader--done { display: none; }
-
-/* ── FUTURE VIDEO LAYER ──────────────────────────────────────────────────
-   A looping <video className="preloader__video" autoPlay muted loop
-   playsInline preload="auto" src="/video/preloader.mp4" /> drops in here.
-   ONE further change is then needed: move mix-blend-mode: difference off
-   .preloader and onto .preloader__wrapper + .preloader__percent-wrap (the
-   text layers only), leaving .preloader a plain opaque container —
-   otherwise difference inverts the video too.
-   ──────────────────────────────────────────────────────────────────────── */
-.preloader__media {
+/* Scrim settling the foot of the frame into the page, so the counter always
+   has a bone ground under it whatever the video is doing. On ::after rather
+   than on the wrap, because the wrap needs overflow:hidden hugging the text
+   for the mask-reveal to clip. */
+.preloader::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  z-index: 0;
+  inset: auto 0 0 0;
+  height: 9rem;
+  background: linear-gradient(
+    to top,
+    rgb(222 214 199 / 0.96),
+    rgb(222 214 199 / 0.75) 45%,
+    rgb(222 214 199 / 0)
+  );
+  pointer-events: none;
+}
+
+.preloader--leaving {
+  transform: translateY(-100%);
+}
+
+.preloader--done {
+  display: none;
 }
 
 .preloader__video {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-}
-
-.preloader__wrapper {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: 0 30px;
-}
-
-.preloader__logo-wrap { overflow: hidden; }
-
-.preloader__logo {
-  display: block;
-  color: var(--color-ink);
-  font-family: var(--font-display);
-  font-size: clamp(40px, 9vw, 120px);
-  font-weight: 640;
-  font-variation-settings: "wght" 640;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transform: translateY(105%);
-  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1) 0.1s;
+  object-fit: contain;
+  /* Knocks the video's white plate out against the bone overlay. See the
+     section header. */
+  mix-blend-mode: multiply;
 }
 
 .preloader__percent-wrap {
   position: absolute;
   z-index: 1;
-  bottom: 30px;
-  left: 30px;
+  left: 0;
+  right: 0;
+  bottom: clamp(1rem, 2.5vw, 1.875rem);
   overflow: hidden;
-  padding: 12px 0 0;
+  text-align: center;
 }
 
 .preloader__percent {
-  display: block;
+  display: inline-block;
+  /* Valturin has NO `tnum` and proportional digits ("1" is 348 units, "0" is
+     685), so font-variant-numeric does nothing and the counter would swing
+     from 1.08em at "1%" to 2.45em at "100%". A fixed box with the text
+     right-aligned pins the % sign and lets the digits grow leftwards. */
+  min-width: 3.2em;
+  text-align: right;
   color: var(--color-ink);
   font-family: var(--font-display);
-  font-size: 30px;
-  font-weight: 640;
-  font-variation-settings: "wght" 640;
+  font-weight: 400;
+  font-size: var(--text-count);
   line-height: 1.2;
-  /* stops the counter jittering as digit widths change */
-  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--text-count--letter-spacing);
   transform: translateY(105%);
   transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1) 0.25s;
 }
 
-.preloader.is-ready .preloader__logo,
 .preloader.is-ready .preloader__percent {
   transform: translateY(0);
 }
 
-@media (max-width: 767px) {
-  .preloader__percent-wrap { bottom: 15px; left: 15px; }
-  .preloader__percent { font-size: 20px; }
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE SHELL
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.page-wrapper {
+  background-color: var(--color-page);
+}
+
+/* The paper panel is announced by a bronze rule rather than a tone change —
+   the single strongest departure from the reference's grey-box treatment. */
+.feedback {
+  background: var(--color-paper);
+  border-top: 1px solid var(--color-bronze);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   PAGE SHELL + HERO
+   FORM FIELD
    ═══════════════════════════════════════════════════════════════════════════ */
-
-.page-wrapper { background-color: var(--color-page); }
-
-.page { padding: 30px; }
-@media (max-width: 767px) { .page { padding: 15px; } }
-
-.contact__hero {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  padding: 120px 120px 30px 0;
-  margin-bottom: 30px;
-}
-@media (max-width: 1919px) { .contact__hero { padding-right: 72px; padding-top: 90px; } }
-@media (max-width: 1439px) { .contact__hero { padding-right: 55px; } }
-@media (max-width: 1023px) { .contact__hero { margin-bottom: 0; } }
-@media (max-width: 767px) {
-  .contact__hero { padding: 105px 0 0; }
-}
-
-.contact__hero-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 100%;
-}
-@media (max-width: 1023px) { .contact__hero-top { flex-direction: column; } }
-
-.contact__title {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 210px;
-  font-weight: 600;
-  font-variation-settings: "wght" 600;
-  line-height: 165px;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-}
-@media (max-width: 1919px) { .contact__title { font-size: 160px; line-height: 135px; } }
-@media (max-width: 1439px) { .contact__title { font-size: 105px; line-height: 95px; } }
-@media (max-width: 1023px) { .contact__title { flex: 0 0 100%; margin-bottom: 45px; } }
-@media (max-width: 767px) {
-  .contact__title { font-size: 75px; line-height: 70px; margin-bottom: 30px; }
-}
-
-/* line mask — each title line reveals from below */
-.contact__title-wrap { overflow: hidden; }
-
-.contact__hero-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-@media (max-width: 1023px) { .contact__hero-info { align-items: flex-start; } }
-
-.contact__links {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding-bottom: 205px;
-  text-align: right;
-}
-@media (max-width: 1919px) { .contact__links { padding-bottom: 125px; } }
-@media (max-width: 1439px) { .contact__links { padding-bottom: 155px; } }
-@media (max-width: 1023px) {
-  .contact__links { align-items: flex-start; padding-bottom: 120px; text-align: left; }
-}
-@media (max-width: 767px) { .contact__links { padding-bottom: 75px; } }
-
-.contact__links > * + * { margin-top: 5px; }
-
-.contact__link {
-  color: inherit;
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 640;
-  font-variation-settings: "wght" 640;
-  line-height: 1;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: opacity 0.2s;
-}
-.contact__link:hover { opacity: 0.5; }
-@media (max-width: 767px) { .contact__link { font-size: 15px; } }
-
-/* the reference underlines these links and shrinks the rule on hover */
-.shrink-underline {
-  position: relative;
-  display: inline-block;
-}
-.shrink-underline::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform-origin: right center;
-  transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
-}
-@media (hover: hover) {
-  .shrink-underline:hover::after { transform: scaleX(0); }
-}
-
-.contact__hero-text {
-  max-width: 420px;
-  color: var(--color-muted);
-  font-size: 15px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 20px;
-  text-align: right;
-  text-transform: uppercase;
-}
-@media (max-width: 1023px) { .contact__hero-text { text-align: left; } }
-@media (max-width: 767px) {
-  .contact__hero-text {
-    max-width: 270px;
-    margin-left: auto;
-    margin-bottom: 75px;
-    font-size: 12px;
-    line-height: 15px;
-    text-align: right;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   FORM SECTION
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-.feedback { background: var(--color-feedback); }
 
 .contact-form {
   display: grid;
-  grid-template-columns: 540px 1fr;
-  row-gap: 30px;
-  padding-top: 90px;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 2.5rem;
+  row-gap: 2.5rem;
+  width: 100%;
+  max-width: 75rem;
+  margin-inline: auto;
+  padding: 2.5rem 1rem 0;
 }
-@media (max-width: 1919px) { .contact-form { padding-top: 75px; } }
-@media (max-width: 1439px) { .contact-form { grid-template-columns: 395px 1fr; padding-top: 60px; } }
-@media (max-width: 1023px) { .contact-form { display: block; padding-top: 45px; } }
-@media (max-width: 767px) { .contact-form { padding-top: 30px; } }
 
-/* ── FIELD ──────────────────────────────────────────────────────────────
-   Must stay overflow: visible — the floated label lives outside the box,
-   up in the row-gap: 30px channel.
-   ──────────────────────────────────────────────────────────────────────── */
+@media (min-width: 64rem) {
+  .contact-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 3rem;
+    padding: 4rem 2rem 0;
+  }
+}
+
+@media (min-width: 90rem) {
+  .contact-form {
+    row-gap: 3.75rem;
+    padding-top: 5.5rem;
+  }
+}
+
+/* `--field-pad-*` is the single source of truth for the inset: the input pads
+   by it and the resting label is positioned to it, so the two can no longer
+   drift apart at a breakpoint. That coupling is what let four paired media
+   queries disappear. Must stay overflow: visible — the floated label lives
+   outside the box, up in the row-gap channel. */
 .contact-form__field {
+  --field-pad-x: clamp(0.75rem, 1.6vw, 1.875rem);
+  --field-pad-y: clamp(0.5rem, 0.9vw, 0.9375rem);
+
   position: relative;
   display: flex;
   align-items: flex-end;
-  height: 73px;
+  height: clamp(3rem, 5.2vw, 4.5rem);
   border-bottom: 1px solid var(--color-hairline);
   cursor: pointer;
-}
-@media (max-width: 1023px) {
-  .contact-form__field { height: 50px; margin-top: 35px; margin-bottom: 15px; }
-}
-@media (max-width: 767px) {
-  .contact-form__field { height: 40px; margin-top: 30px; margin-bottom: 0; }
+  transition: border-color 0.25s;
 }
 
-.contact-form__field_wide { grid-column: 1 / 3; }
+.contact-form__field_wide {
+  grid-column: 1 / -1;
+}
 
 .contact-form__input,
 .contact-form__placeholder {
   color: var(--color-idle);
   font-family: var(--font-display);
-  font-size: 35px;
-  font-weight: 640;
-  font-variation-settings: "wght" 640;
+  /* 400 is the ONLY weight Valturin has. Anything else is synthetic bold. */
+  font-weight: 400;
+  font-size: var(--text-field);
+  /* line-height 1 on both is what makes the flex-end alignment exact: the
+     control's line box and the resting label's box share a bottom edge. */
   line-height: 1;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-@media (max-width: 1919px) {
-  .contact-form__input, .contact-form__placeholder { font-size: 30px; }
-}
-@media (max-width: 1439px) {
-  .contact-form__input, .contact-form__placeholder { font-size: 25px; }
-}
-@media (max-width: 767px) {
-  .contact-form__input, .contact-form__placeholder { font-size: 20px; }
+  letter-spacing: var(--text-field--letter-spacing);
 }
 
+/* `height: auto` rather than 100%: as a flex-end child the control's own line
+   box then sits at the bottom of the row, exactly where the resting label is.
+   Clicks on the empty space above are forwarded to it by the field's
+   onMouseDown handler in FieldShell. */
 .contact-form__input {
   appearance: none;
   -webkit-appearance: none;
   width: 100%;
-  height: 100%;
-  padding: 15px 30px;
+  height: auto;
+  padding: var(--field-pad-y) var(--field-pad-x);
   background: none;
   border: 0;
   box-shadow: none;
@@ -482,161 +350,120 @@ html[data-loaded] .contact__hero-text .reveal { transition-delay: 0.26s; }
   cursor: text;
   transition: color 0.2s;
 }
-@media (max-width: 1439px) { .contact-form__input { padding: 10px 30px; } }
-@media (max-width: 767px) { .contact-form__input { padding: 0 15px; margin-top: auto; } }
 
-/* Anchored at rest to exactly where typed text sits: left = the input's
-   padding-left, bottom = its padding-bottom. Keep the two in sync at every
-   breakpoint or the label will jump on focus. */
 .contact-form__placeholder {
   position: absolute;
-  left: 30px;
-  bottom: 15px;
+  left: var(--field-pad-x);
+  bottom: var(--field-pad-y);
   margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   pointer-events: none;
   white-space: nowrap;
   cursor: pointer;
-  /* enumerated, not `transition: 0.3s` — the shorthand expands to
-     `transition: all`, which would animate layout properties too */
+  /* Enumerated, not the `transition: .3s` shorthand — that expands to `all`
+     and would animate layout properties too. font-family is absent on
+     purpose: it cannot interpolate, it swaps on the first frame. */
   transition:
     bottom 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
     font-size 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
-    line-height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
+    letter-spacing 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
     color 0.2s;
 }
-@media (max-width: 1439px) { .contact-form__placeholder { bottom: 10px; } }
-@media (max-width: 767px) { .contact-form__placeholder { left: 15px; bottom: 8px; } }
 
-/* ── FLOATED (field has focus, an open menu, or a value) ─────────────────
-   The floated label deliberately switches family AND weight, which is why
-   this is a bottom/font-size transition rather than a composited
-   transform: scale() — a transform cannot interpolate
-   font-variation-settings or swap the font family.
-   ──────────────────────────────────────────────────────────────────────── */
+/* ── FLOATED (focus, open menu, or a value) ──────────────────────────────
+   The hierarchy shift here is FAMILY + SIZE + TRACKING + COLOUR. There is no
+   weight step, because the display face has exactly one weight. The tracking
+   opening from .06em to .24em as the label rises is what replaces it — and
+   unlike font-variation-settings, letter-spacing actually interpolates. ─── */
 .contact-form__field.active .contact-form__placeholder {
-  bottom: 100%;
+  bottom: calc(100% + 0.35rem);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 15px;
+  font-size: var(--text-label);
+  letter-spacing: var(--text-label--letter-spacing);
 }
-@media (max-width: 767px) {
-  .contact-form__field.active .contact-form__placeholder {
-    font-size: 9px;
-    line-height: 10px;
+
+.contact-form__field.active .contact-form__input,
+.contact-form__field.visible .contact-form__input,
+.contact-form__field.visible .contact-form__placeholder {
+  color: var(--color-ink);
+}
+
+.contact-form__field:focus-within {
+  border-color: var(--color-bronze);
+}
+
+/* Was `@media (min-width: 1200px)` — a width proxy for "has a mouse", which
+   wrongly gave a hover state to 1200px touch devices and denied it to 1024px
+   laptops. The feature query is what was actually meant. */
+@media (hover: hover) {
+  .contact-form__field:hover {
+    border-color: var(--color-bronze);
+  }
+
+  .contact-form__field:hover .contact-form__placeholder {
+    color: var(--color-ink);
   }
 }
 
-.contact-form__field.active .contact-form__input { color: var(--color-ink); }
-
-/* ── FILLED ─────────────────────────────────────────────────────────────── */
-.contact-form__field.visible .contact-form__input,
-.contact-form__field.visible .contact-form__placeholder { color: var(--color-ink); }
-.contact-form__field.visible .contact-form__placeholder::after { opacity: 1; }
-
-/* ── HOVER (desktop only, per the reference) ─────────────────────────────── */
-@media (min-width: 1200px) {
-  .contact-form__field:hover .contact-form__placeholder { color: var(--color-ink); }
+.contact-form__field.invalid {
+  border-color: var(--color-invalid);
 }
 
-/* ── INVALID ────────────────────────────────────────────────────────────── */
-.contact-form__field.invalid { border-color: var(--color-invalid); }
 .contact-form__field.invalid .contact-form__placeholder,
-.contact-form__field.invalid .contact-form__input { color: var(--color-invalid); }
-
-/* ── SELECT ARROW ───────────────────────────────────────────────────────
-   NOTE: the reference uses `.active` on the PLACEHOLDER for the rotated
-   arrow and `.active` on the FIELD for the floated label — two different
-   meanings for one class name. Ours renames the arrow state to `.is-open`.
-   ──────────────────────────────────────────────────────────────────────── */
-.contact-form__placeholder.arrow::after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  width: 15px;
-  height: 15px;
-  margin-left: 5px;
-  margin-top: -2px;
-  background-image: url("/icons/select-down.svg");
-  background-position: 100% center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  opacity: 0.2;
-  transform: translateY(-50%);
-  transition: transform 0.2s, opacity 0.2s;
-}
-.contact-form__placeholder.arrow.is-open::after {
-  transform: translateY(-50%) rotate(180deg);
-  opacity: 1;
-}
-.contact-form__field.invalid .contact-form__placeholder.arrow::after {
-  background-image: url("/icons/select-down-red.svg");
-  opacity: 1;
+.contact-form__field.invalid .contact-form__input {
+  color: var(--color-invalid);
 }
 
-/* ── DROPDOWN LIST ──────────────────────────────────────────────────────── */
-.dropdown {
-  position: absolute;
-  top: calc(100% + 1px);
-  left: 0;
-  z-index: 20;
-  width: 100%;
-  max-height: 280px;
-  overflow-y: auto;
-  margin: 0;
-  padding: 10px 0;
-  list-style: none;
-  background: var(--color-page);
-  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.25);
-}
-
-.dropdown__item { margin: 0; }
-
-.dropdown__button {
-  display: block;
-  width: 100%;
-  list-style: none;
-  padding: 10px 30px;
-  background: none;
-  border: 0;
-  color: var(--color-muted);
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 1.2;
-  text-align: left;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.2s, background-color 0.2s;
-}
-.dropdown__button:hover,
-.dropdown__button.is-active,
-.dropdown__item[aria-selected="true"] {
-  color: var(--color-ink);
-  background: var(--color-feedback);
-  outline: none;
-}
-/* the <ul> holds focus; the active option is tracked via aria-activedescendant */
-.dropdown:focus { outline: none; }
-@media (max-width: 767px) { .dropdown__button { padding: 10px 15px; } }
-
+/* Select trigger: a button carrying the same typography as an input. */
 .contact-form__trigger {
   text-align: left;
   cursor: pointer;
+}
+
+/* ── CHEVRON ────────────────────────────────────────────────────────────
+   Drawn in CSS rather than loaded as an SVG background, so its colour is a
+   token and the invalid state comes free. That also removed two files from
+   the repo. NOTE: `.is-open` lives on the PLACEHOLDER while `.active` lives
+   on the FIELD — the reference overloaded one class name for both. ─────── */
+.contact-form__placeholder.arrow::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + 0.75rem);
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 1.5px solid var(--color-bronze);
+  border-bottom: 1.5px solid var(--color-bronze);
+  opacity: 0.65;
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 0.2s, opacity 0.2s, border-color 0.2s;
+}
+
+.contact-form__placeholder.arrow.is-open::after {
+  transform: translateY(-30%) rotate(225deg);
+  opacity: 1;
+}
+
+.contact-form__field.visible .contact-form__placeholder.arrow::after {
+  opacity: 1;
+}
+
+.contact-form__field.invalid .contact-form__placeholder.arrow::after {
+  border-color: var(--color-invalid);
+  opacity: 1;
 }
 
 /* ── DATE FIELD ─────────────────────────────────────────────────────────── */
 .contact-form__input[type="date"] {
   -webkit-appearance: none;
   appearance: none;
-  min-height: 1em; /* iOS Safari otherwise imposes its own control height */
+  /* iOS Safari otherwise imposes its own control height. */
+  min-height: 1em;
 }
-/* the whole field opens the picker */
+
+/* The whole field opens the picker. */
 .contact-form__input[type="date"]::-webkit-calendar-picker-indicator {
   position: absolute;
   inset: 0;
@@ -645,7 +472,79 @@ html[data-loaded] .contact__hero-text .reveal { transition-delay: 0.26s; }
   opacity: 0;
   cursor: pointer;
 }
-.contact-form__input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+
+.contact-form__input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+/* Honeypot — off-screen, never focusable, never announced. */
+.contact-form__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DROPDOWN
+   The panel is bone on a paper ground, so an opening menu reads as a darker
+   card — the right depth cue on a light ground.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  z-index: 20;
+  width: 100%;
+  max-height: 17.5rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.5rem 0;
+  list-style: none;
+  background: var(--color-bone);
+  border: 1px solid var(--color-bronze);
+  box-shadow: 0 24px 48px -24px rgb(41 35 19 / 0.35);
+}
+
+.dropdown:focus {
+  outline: none;
+}
+
+.dropdown__item {
+  margin: 0;
+}
+
+.dropdown__button {
+  display: block;
+  width: 100%;
+  list-style: none;
+  padding: 0.625rem var(--field-pad-x, 1.25rem);
+  background: none;
+  border: 0;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-option);
+  line-height: 1.2;
+  letter-spacing: var(--text-option--letter-spacing);
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+/* The inset bronze bar is a far clearer active indicator than a background
+   tint alone, and it does not depend on colour perception. */
+.dropdown__button:hover,
+.dropdown__button.is-active,
+.dropdown__item[aria-selected="true"] {
+  color: var(--color-ink);
+  background: var(--color-paper);
+  box-shadow: inset 2px 0 0 var(--color-bronze);
+  outline: none;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CONSENT CHECKBOX
@@ -654,11 +553,11 @@ html[data-loaded] .contact__hero-text .reveal { transition-delay: 0.26s; }
 .checkbox-container {
   position: relative;
   display: flex;
-  padding-left: 30px;
+  padding-left: 1.875rem;
   cursor: pointer;
 }
 
-/* The reference uses `display: none`, which removes the control from the
+/* The reference used `display: none`, which removes the control from the
    accessibility tree and makes it unfocusable. Visually-hidden instead. */
 .checkbox-input {
   position: absolute;
@@ -672,152 +571,74 @@ html[data-loaded] .contact__hero-text .reveal { transition-delay: 0.26s; }
   border: 0;
 }
 
+/* Sentence case at a 12px floor everywhere. The reference set 250 characters
+   of legal copy in uppercase and dropped it to 9px below 768 — this is the
+   text people are being asked to agree to. */
 .checkbox-paragraph {
   position: relative;
-  max-width: 450px;
+  max-width: 34rem;
   color: var(--color-muted);
-  font-size: 12px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  letter-spacing: 0;
-  line-height: 20px;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: var(--text-legal);
+  line-height: 1.75;
+  letter-spacing: var(--text-legal--letter-spacing);
   transition: color 0.3s;
 }
-@media (max-width: 1279px) { .checkbox-paragraph { padding-right: 30px; } }
-@media (max-width: 1023px) { .checkbox-paragraph { max-width: 420px; padding-right: 20px; } }
-@media (max-width: 767px) {
-  .checkbox-paragraph { font-size: 9px; line-height: 15px; padding-right: 0; }
+
+.checkbox-paragraph.checked {
+  color: var(--color-ink);
 }
-.checkbox-paragraph.checked { color: var(--color-ink); }
-.checkbox-paragraph.invalid { color: var(--color-invalid); }
+
+.checkbox-paragraph.invalid {
+  color: var(--color-invalid);
+}
+
 @media (hover: hover) {
-  .checkbox-container:hover .checkbox-paragraph { color: var(--color-ink); }
+  .checkbox-container:hover .checkbox-paragraph {
+    color: var(--color-ink);
+  }
+
+  .checkbox-container:hover .checkbox-paragraph-label {
+    border-color: var(--color-bronze);
+  }
 }
 
 .checkbox-paragraph-label {
   position: absolute;
   left: 0;
-  top: 2px;
-  width: 15px;
-  height: 15px;
-  border: 2px solid var(--color-idle);
-  border-radius: 2px;
+  top: 0.3em;
+  width: 0.9375rem;
+  height: 0.9375rem;
+  border: 1px solid var(--color-idle);
+  border-radius: 1px;
   transition: background-color 0.3s, border-color 0.3s;
 }
-.checkbox-paragraph-label.invalid { border-color: var(--color-invalid); }
-@media (min-width: 1200px) {
-  .checkbox-paragraph-label:hover { border-color: var(--color-ink); }
+
+.checkbox-paragraph-label.invalid {
+  border-color: var(--color-invalid);
 }
+
 .checkbox-input:checked ~ .checkbox-paragraph-label {
-  background: url("/icons/tick.svg") 50% center no-repeat var(--color-ink);
-  border-color: var(--color-ink);
-}
-.checkbox-input:focus-visible ~ .checkbox-paragraph-label {
-  outline: 2px solid var(--color-ink);
-  outline-offset: 2px;
+  background-color: var(--color-bronze);
+  border-color: var(--color-bronze);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   FORM FOOTER + SEND
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-.contact__feedback-footer {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  grid-column: 1 / 3;
-  width: 100%;
-  margin-top: 60px;
-  padding: 0 30px 172px;
-}
-@media (max-width: 1919px) { .contact__feedback-footer { margin-top: 30px; padding-bottom: 150px; } }
-@media (max-width: 1279px) { .contact__feedback-footer { margin-top: 40px; padding-bottom: 105px; } }
-@media (max-width: 767px) {
-  .contact__feedback-footer { flex-direction: column; padding: 15px 15px 60px; }
-}
-
-.contact__feedback-send {
-  display: flex;
-  align-items: center;
-  /* the reference's arrow asset carries its own padding; ours is a tight
-     circle, so the label needs explicit breathing room */
-  gap: 20px;
-  margin-left: auto;
-  margin-right: 45px;
-  margin-top: -50px;
-  padding: 0;
-  background: none;
-  border: 0;
-  color: var(--color-ink);
-  font-family: var(--font-display);
-  font-size: 30px;
-  font-weight: 640;
-  font-variation-settings: "wght" 640;
-  line-height: 1;
-  text-align: right;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: opacity 0.3s linear;
-}
-@media (max-width: 1919px) {
-  .contact__feedback-send { font-size: 20px; line-height: 20px; margin-top: -30px; }
-}
-@media (max-width: 1023px) {
-  .contact__feedback-send { font-size: 15px; line-height: 20px; margin-right: 0; margin-top: -15px; }
-}
-@media (max-width: 767px) {
-  .contact__feedback-send { margin-right: 0; margin-top: 60px; }
-}
-.contact__feedback-send:hover { opacity: 0.5; }
-.contact__feedback-send:disabled { opacity: 0.4; cursor: progress; }
-.contact__feedback-send span { display: inline-block; margin-top: -3px; }
-
-/* The reference hides this span at ≤767, which strips the button's
-   accessible name. Visually-hide it instead so the arrow keeps a label. */
-@media (max-width: 767px) {
-  .contact__feedback-send span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-}
-
-.contact__feedback-icon {
-  width: 168px;
-  height: 168px;
-  transition: transform 0.2s;
-}
-@media (max-width: 1919px) { .contact__feedback-icon { width: 126px; height: 126px; } }
-@media (max-width: 1023px) { .contact__feedback-icon { width: 90px; height: 90px; } }
-@media (max-width: 767px) { .contact__feedback-icon { margin-left: 0; } }
-
-.contact__feedback-status {
-  display: block;
-  margin-top: 10px;
-  color: var(--color-invalid);
-  font-size: 12px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 15px;
-  text-transform: uppercase;
-}
-
-.contact__feedback-consent { display: flex; flex-direction: column; }
-
-/* honeypot — off-screen, never focusable, never announced */
-.contact-form__hp {
+/* Masked rather than used as a background-image, so the tick's colour is a
+   token and the SVG file is never edited. An SVG used as a mask is matched
+   on ALPHA, and tick.svg is a stroke on `fill: none` — the stroke pixels are
+   the only opaque ones. */
+.checkbox-input:checked ~ .checkbox-paragraph-label::after {
+  content: "";
   position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
+  inset: 0;
+  background-color: var(--color-bone);
+  -webkit-mask: url("/icons/tick.svg") 50% 50% / 0.625rem 0.625rem no-repeat;
+  mask: url("/icons/tick.svg") 50% 50% / 0.625rem 0.625rem no-repeat;
+}
+
+.checkbox-input:focus-visible ~ .checkbox-paragraph-label {
+  outline: 2px solid var(--color-bronze);
+  outline-offset: 2px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -831,168 +652,134 @@ html[data-loaded] .contact__hero-text .reveal { transition-delay: 0.26s; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgb(27 23 16 / 0.9);
   -webkit-backdrop-filter: blur(7.5px);
   backdrop-filter: blur(7.5px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.7s 0.7s;
 }
+
 .feedback-popup.show {
   opacity: 1;
   pointer-events: all;
   transition: opacity 0.7s;
 }
 
-/* The reference pairs a fixed font-size with a fixed max-width, which only
-   works because Forma DJR is narrow. Archivo sets ~6% wider, so
-   "SUCCESSFULLY" overflowed 900px at 120px and clipped. max-width is
-   therefore expressed in `em` (0.662em per uppercase glyph × 12 glyphs
-   ≈ 7.95em, plus a hair), and each font-size is capped against the viewport
-   so the word fits at any width and in any of the four size steps. Re-measure
-   the per-glyph ratio if you swap the display face. */
+/* "SUCCESSFULLY" measures 7.179em in Valturin (0.639em per uppercase glyph),
+   plus 0.06em tracking x 12 glyphs = 7.899em — so 8em is the tight fit.
+   Re-measure that per-glyph ratio if the display face is ever swapped.
+   `margin-inline-end` cancels the trailing letter-spacing CSS adds after the
+   last glyph, which would otherwise push a centred line left by half of it.
+   No mix-blend-mode: on a warm near-black veil, difference would render bone
+   as a garish cyan. Bone on veil is 12.37:1 flat. */
 .feedback-popup-heading {
-  max-width: 8.1em;
-  color: #fff;
+  max-width: 8em;
+  color: var(--color-bone);
   font-family: var(--font-display);
-  font-size: min(120px, 11vw);
-  font-weight: 640;
-  font-variation-settings: "wght" 640;
-  line-height: 79%;
-  letter-spacing: 0;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 8vw, 10rem);
+  line-height: 0.86;
+  letter-spacing: 0.06em;
+  margin-inline-end: -0.06em;
   text-align: center;
   text-transform: uppercase;
-  /* blends against the popup's own rgba(0,0,0,.8), not the page, because
-     backdrop-filter above creates a stacking context. That is intended —
-     do not add `isolation` inside this subtree. */
-  mix-blend-mode: difference;
 }
-@media (min-width: 1920px) { .feedback-popup-heading { font-size: min(160px, 11vw); } }
-@media (max-width: 1439px) { .feedback-popup-heading { font-size: min(75px, 11vw); } }
-@media (max-width: 767px) { .feedback-popup-heading { font-size: min(40px, 11vw); } }
 
-.feedback-popup-heading > span { display: block; overflow: hidden; line-height: 1; }
-.feedback-popup-heading > span:not(:first-child) { margin-top: -3%; }
+.feedback-popup-heading > span {
+  display: block;
+  overflow: hidden;
+  line-height: 1;
+}
 
-/* NOTE: -105%, i.e. this one reveals DOWNWARD, while the preloader and the
-   hero reveal upward from +105%. Both are faithful to the reference. */
+.feedback-popup-heading > span:not(:first-child) {
+  margin-top: -3%;
+}
+
+/* -105%, i.e. this one reveals DOWNWARD, while the preloader counter and the
+   hero reveal upward from +105%. Both are deliberate. */
 .feedback-popup-heading > span > span {
   display: block;
   transform: translateY(-105%);
   transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1) 0.35s;
 }
-.feedback-popup.show .feedback-popup-heading > span > span { transform: translateY(0); }
-.feedback-popup.show .feedback-popup-heading > span:nth-child(2) > span { transition-delay: 0.45s; }
 
-.feedback-popup__close {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  padding: 8px;
-  background: none;
-  border: 0;
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 640;
-  font-variation-settings: "wght" 640;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: opacity 0.2s;
+.feedback-popup.show .feedback-popup-heading > span > span {
+  transform: translateY(0);
 }
-.feedback-popup__close:hover { opacity: 0.5; }
-@media (max-width: 767px) { .feedback-popup__close { top: 15px; right: 15px; } }
+
+.feedback-popup.show .feedback-popup-heading > span:nth-child(2) > span {
+  transition-delay: 0.45s;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   FOOTER
+   SHARED
    ═══════════════════════════════════════════════════════════════════════════ */
 
-.footer {
-  display: grid;
-  /* three columns, not the reference's four — the Menu column is gone */
-  grid-template-columns: repeat(3, 1fr);
-  align-items: start;
-  gap: 30px;
-  padding: 60px 30px 0;
-  text-transform: uppercase;
-}
-@media (max-width: 1023px) { .footer { grid-template-columns: repeat(2, 1fr); padding-right: 0; } }
-@media (max-width: 767px) { .footer { grid-template-columns: 1fr; gap: 20px; padding: 45px 15px 0; } }
-
-.footer__column { display: flex; flex-direction: column; align-items: flex-start; }
-
-.footer__email,
-.footer__phone {
-  color: inherit;
-  font-size: 12px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 20px;
-  text-decoration: none;
+.shrink-underline {
+  position: relative;
+  display: inline-block;
 }
 
-.footer__by {
-  margin: 0;
-  color: var(--color-muted);
-  font-size: 12px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 20px;
-}
-
-.developed-by-btn {
-  color: inherit;
-  font-size: 12px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 20px;
-  text-decoration: none;
-}
-
-.footer__column_4 {
-  color: var(--color-muted);
-  font-size: 12px;
-  font-weight: 480;
-  font-variation-settings: "wght" 480;
-  line-height: 20px;
-}
-@media (max-width: 1023px) { .footer__column_4 { grid-column: 1 / -1; } }
-
-.footer__title-wrapper {
-  grid-column: 1 / -1;
+.shrink-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.15em;
   width: 100%;
-  margin-top: 45px;
+  height: 1px;
+  background: var(--color-bronze);
+  transform-origin: right center;
+  transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
 }
-.footer__title-wrapper svg { display: block; width: 100%; height: auto; }
+
+@media (hover: hover) {
+  .shrink-underline:hover::after {
+    transform: scaleX(0);
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    REDUCED MOTION
    The floating label still MOVES — it must, or it would overlap typed text.
-   It just moves instantly. Reduced motion means no gratuitous animation,
-   not no state change.
+   It just moves instantly. Reduced motion means no gratuitous animation, not
+   no state change.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
   .reveal,
-  .preloader__logo,
   .preloader__percent,
   .feedback-popup-heading > span > span {
     transform: none !important;
     transition: none !important;
   }
 
-  .preloader { transition: opacity 0.2s linear !important; }
-  .preloader--leaving { transform: none !important; opacity: 0; }
+  /* A full-bleed looping video is precisely what this query exists to
+     suppress. CSS cannot pause playback, so Preloader.tsx also calls
+     .pause() on the element — both are needed. */
+  .preloader__video {
+    display: none;
+  }
+
+  .preloader {
+    transition: opacity 0.2s linear !important;
+  }
+
+  .preloader--leaving {
+    transform: none !important;
+    opacity: 0;
+  }
 
   .contact-form__placeholder,
   .contact-form__placeholder::after,
-  .contact__feedback-send,
-  .contact__feedback-icon,
+  .contact-form__field,
   .checkbox-paragraph,
   .checkbox-paragraph-label,
+  .dropdown__button,
   .shrink-underline::after,
   .feedback-popup {
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
   }
 }
+

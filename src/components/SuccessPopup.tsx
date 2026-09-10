@@ -43,7 +43,12 @@ export function SuccessPopup({ show, onClose }: Props) {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <button ref={closeRef} type="button" className="feedback-popup__close" onClick={onClose}>
+      <button
+        ref={closeRef}
+        type="button"
+        className="absolute right-4 top-4 p-2 font-body text-[0.6875rem] uppercase tracking-[0.2em] text-bone transition-colors duration-200 hover:text-bronze md:right-8 md:top-8"
+        onClick={onClose}
+      >
         Close
       </button>
 
