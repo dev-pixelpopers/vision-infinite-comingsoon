@@ -16,7 +16,7 @@ export default function Page() {
     <div className="page-wrapper">
       <Preloader />
 
-      <section className="hero mx-auto flex w-full max-w-[56rem] flex-col items-center px-4 pt-24 pb-16 text-center md:px-8 md:pt-32 md:pb-24 xl:pt-40">
+      <section className="hero mx-auto flex w-full max-w-[90rem] flex-col items-center px-4 pt-10 pb-16 text-center md:px-8 md:pt-10 md:pb-24 xl:pt-10">
         {/* The PNG's ground is opaque #fff. `multiply` knocks it out against
             the bone page — multiply(white, bone) === bone exactly — while the
             dark engraved strokes survive. Relies on body's `isolation:
@@ -47,12 +47,7 @@ export default function Page() {
             cancels the trailing letter-spacing CSS adds after the last glyph,
             which would otherwise push the centred line left by half of it. */}
         <h1 className="hero__title mt-10 flex flex-col font-display text-display uppercase text-ink me-[-0.1em] md:mt-12">
-          <span className="reveal-wrap">
-            <span className="reveal">Coming</span>
-          </span>
-          <span className="reveal-wrap">
-            <span className="reveal">Soon</span>
-          </span>
+          Coming Soon
         </h1>
 
         <div className="hero__lead reveal-wrap mt-8 md:mt-10">

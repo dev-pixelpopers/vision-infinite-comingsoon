@@ -76,6 +76,7 @@
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
 @font-face {
   font-family: "Jost";
   font-style: normal;
@@ -124,6 +125,10 @@ html[data-loading] body {
   height: 100%;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    ENTRANCE REVEAL
    Driven entirely from CSS off html[data-loaded], which Preloader sets once
@@ -145,11 +150,25 @@ html[data-loaded] .reveal {
   transform: translateY(0);
 }
 
-html[data-loaded] .hero__title > *:nth-child(1) .reveal { transition-delay: 0.06s; }
-html[data-loaded] .hero__title > *:nth-child(2) .reveal { transition-delay: 0.14s; }
-html[data-loaded] .hero__lead .reveal { transition-delay: 0.22s; }
-html[data-loaded] .hero__links > *:nth-child(1) .reveal { transition-delay: 0.3s; }
-html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34s; }
+html[data-loaded] .hero__title>*:nth-child(1) .reveal {
+  transition-delay: 0.06s;
+}
+
+html[data-loaded] .hero__title>*:nth-child(2) .reveal {
+  transition-delay: 0.14s;
+}
+
+html[data-loaded] .hero__lead .reveal {
+  transition-delay: 0.22s;
+}
+
+html[data-loaded] .hero__links>*:nth-child(1) .reveal {
+  transition-delay: 0.3s;
+}
+
+html[data-loaded] .hero__links>*:nth-child(2) .reveal {
+  transition-delay: 0.34s;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    PRELOADER
@@ -192,12 +211,10 @@ html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34
   position: absolute;
   inset: auto 0 0 0;
   height: 9rem;
-  background: linear-gradient(
-    to top,
-    rgb(222 214 199 / 0.96),
-    rgb(222 214 199 / 0.75) 45%,
-    rgb(222 214 199 / 0)
-  );
+  background: linear-gradient(to top,
+      rgb(222 214 199 / 0.96),
+      rgb(222 214 199 / 0.75) 45%,
+      rgb(222 214 199 / 0));
   pointer-events: none;
 }
 
@@ -618,7 +635,7 @@ html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34
   border-color: var(--color-invalid);
 }
 
-.checkbox-input:checked ~ .checkbox-paragraph-label {
+.checkbox-input:checked~.checkbox-paragraph-label {
   background-color: var(--color-bronze);
   border-color: var(--color-bronze);
 }
@@ -627,7 +644,7 @@ html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34
    token and the SVG file is never edited. An SVG used as a mask is matched
    on ALPHA, and tick.svg is a stroke on `fill: none` — the stroke pixels are
    the only opaque ones. */
-.checkbox-input:checked ~ .checkbox-paragraph-label::after {
+.checkbox-input:checked~.checkbox-paragraph-label::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -636,7 +653,7 @@ html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34
   mask: url("/icons/tick.svg") 50% 50% / 0.625rem 0.625rem no-repeat;
 }
 
-.checkbox-input:focus-visible ~ .checkbox-paragraph-label {
+.checkbox-input:focus-visible~.checkbox-paragraph-label {
   outline: 2px solid var(--color-bronze);
   outline-offset: 2px;
 }
@@ -686,29 +703,29 @@ html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34
   text-transform: uppercase;
 }
 
-.feedback-popup-heading > span {
+.feedback-popup-heading>span {
   display: block;
   overflow: hidden;
   line-height: 1;
 }
 
-.feedback-popup-heading > span:not(:first-child) {
+.feedback-popup-heading>span:not(:first-child) {
   margin-top: -3%;
 }
 
 /* -105%, i.e. this one reveals DOWNWARD, while the preloader counter and the
    hero reveal upward from +105%. Both are deliberate. */
-.feedback-popup-heading > span > span {
+.feedback-popup-heading>span>span {
   display: block;
   transform: translateY(-105%);
   transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1) 0.35s;
 }
 
-.feedback-popup.show .feedback-popup-heading > span > span {
+.feedback-popup.show .feedback-popup-heading>span>span {
   transform: translateY(0);
 }
 
-.feedback-popup.show .feedback-popup-heading > span:nth-child(2) > span {
+.feedback-popup.show .feedback-popup-heading>span:nth-child(2)>span {
   transition-delay: 0.45s;
 }
 
@@ -747,9 +764,10 @@ html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
+
   .reveal,
   .preloader__percent,
-  .feedback-popup-heading > span > span {
+  .feedback-popup-heading>span>span {
     transform: none !important;
     transition: none !important;
   }
@@ -782,4 +800,3 @@ html[data-loaded] .hero__links > *:nth-child(2) .reveal { transition-delay: 0.34
     transition-delay: 0s !important;
   }
 }
-
