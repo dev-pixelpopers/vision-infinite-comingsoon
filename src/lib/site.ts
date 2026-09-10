@@ -2,7 +2,7 @@
 
 export const SITE_NAME = "Vision infinie";
 
-export const CONTACT_EMAIL = "hello@visioninfinite.com";
+export const CONTACT_EMAIL = "hello@visioninfinie.com";
 
 /** Raw value; the tel: href strips everything but digits and a leading +. */
 export const CONTACT_PHONE = "+00 000 000 0000";
