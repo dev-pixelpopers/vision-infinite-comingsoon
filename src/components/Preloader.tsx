@@ -90,7 +90,7 @@ export function Preloader() {
       <video
         ref={videoRef}
         className="preloader__video"
-        src="/assets/videos/preloader_video.mp4"
+        src="/assets/videos/preloader_video_2.mp4"
         autoPlay
         muted
         loop

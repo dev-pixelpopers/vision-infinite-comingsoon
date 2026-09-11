@@ -6,14 +6,14 @@
    utility. `@theme inline` only generates the utility — and contact.css reads
    var(--color-bronze) / var(--text-field) directly, so we need both. */
 @theme {
-  /* ── FAMILIES ──────────────────────────────────────────────────────────
+   /* ── FAMILIES ──────────────────────────────────────────────────────────
      Both @font-face blocks are hand-written in contact.css and self-hosted
      from public/assets/fonts/, NOT next/font — deliberately, so a licensed
      face drops in by changing one src: url() line. ─────────────────────── */
-  --font-display: "Valturin", "Iowan Old Style", Georgia, serif;
-  --font-body: "Jost", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+   --font-display: "Bodera-Regular", "Iowan Old Style", Georgia, serif;
+   --font-body: "Corbert-Black", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* ── BRAND ─────────────────────────────────────────────────────────────
+   /* ── BRAND ─────────────────────────────────────────────────────────────
      Contrast, computed (WCAG 2.x relative luminance):
        ink    on bone    10.83:1   AAA — anything
        bone   on veil    12.37:1   AAA
@@ -21,83 +21,95 @@
        muted  on bone     5.12:1   AA  — body copy
        idle   on bone     3.23:1   AA-large — resting field labels only
      Bronze never carries body copy. See the note under DERIVED. ────────── */
-  --color-bone: #ded6c7; /* page ground */
-  --color-ink: #292313; /* text */
-  --color-bronze: #946928; /* rules, focus, accents, the send arrow */
+   --color-bone: #ded6c7;
+   /* page ground */
+   --color-ink: #292313;
+   /* text */
+   --color-bronze: #946928;
+   /* rules, focus, accents, the send arrow */
 
-  /* ── GROUNDS ───────────────────────────────────────────────────────────
+   /* ── GROUNDS ───────────────────────────────────────────────────────────
      `paper` is LIGHTER than the page, not darker. A darker panel drops idle
      to 2.93:1, and pressed paper laid on a board suits an engraved wedding
      mark rather better than a grey box does. ───────────────────────────── */
-  --color-page: #ded6c7; /* alias of bone; contact.css reads this name */
-  --color-paper: #e7e0d3; /* form panel */
-  --color-veil: #1b1710; /* preloader ground, letterbox bars, popup */
+   --color-page: #ded6c7;
+   /* alias of bone; contact.css reads this name */
+   --color-paper: #e7e0d3;
+   /* form panel */
+   --color-veil: #1b1710;
+   /* preloader ground, letterbox bars, popup */
 
-  /* ── DERIVED ───────────────────────────────────────────────────────────
+   /* ── DERIVED ───────────────────────────────────────────────────────────
      Every one is ink or bronze composited onto bone, so nothing in this
      palette is a black alpha and nothing goes cold.
        muted    ink 72%   5.12:1 on bone / 5.63:1 on paper   AA
        idle     ink 55%   3.23:1                             AA-large
        hairline bronze 60%  1.97:1 — DECORATIVE ONLY, never text
        invalid  oxblood   5.79:1 on bone                     AA          */
-  --color-muted: #5c5545;
-  --color-idle: #7a7464;
-  --color-hairline: #b29568;
-  --color-invalid: #8e2b1b;
+   --color-muted: #5c5545;
+   --color-idle: #7a7464;
+   --color-hairline: #b29568;
+   --color-invalid: #8e2b1b;
 
-  /* ── TYPE SCALE ────────────────────────────────────────────────────────
+   /* ── TYPE SCALE ────────────────────────────────────────────────────────
      Valturin has ONE static weight. Hierarchy is size + case + tracking +
      colour only — there is not a single weight step anywhere in this design.
      Each --text-* carries its own line-height and tracking, so the JSX says
      `text-display` and gets all three at once. ─────────────────────────── */
-  --text-display: clamp(3.5rem, 11vw, 9.5rem);
-  --text-display--line-height: 0.9;
-  --text-display--letter-spacing: 0.1em;
+   --text-display: clamp(3.5rem, 7vw, 6.5rem);
+   --text-display--line-height: 1;
+   --text-display--letter-spacing: 0.1em;
 
-  --text-lead: clamp(0.875rem, 0.6vw + 0.7rem, 1rem);
-  --text-lead--line-height: 1.75;
-  --text-lead--letter-spacing: 0.015em;
+   --text-lead: clamp(0.875rem, 0.6vw + 0.7rem, 1rem);
+   --text-lead--line-height: 1.75;
+   --text-lead--letter-spacing: 0.015em;
 
-  --text-meta: 0.8125rem;
-  --text-meta--line-height: 1.4;
-  --text-meta--letter-spacing: 0.18em;
+   --text-meta: 0.8125rem;
+   --text-meta--line-height: 1.4;
+   --text-meta--letter-spacing: 0.18em;
 
-  --text-field: clamp(1.25rem, 1.9vw, 1.75rem);
-  --text-field--line-height: 1;
-  --text-field--letter-spacing: 0.02em;
+   --text-field: clamp(1.25rem, 1.9vw, 1.75rem);
+   --text-field--line-height: 1;
+   --text-field--letter-spacing: 0.02em;
 
-  --text-label: 0.6875rem;
-  --text-label--line-height: 1;
-  --text-label--letter-spacing: 0.24em;
+   --text-label: 0.6875rem;
+   --text-label--line-height: 1;
+   --text-label--letter-spacing: 0.24em;
 
-  --text-option: 0.875rem;
-  --text-option--line-height: 1.2;
-  --text-option--letter-spacing: 0.12em;
+   --text-option: 0.875rem;
+   --text-option--line-height: 1.2;
+   --text-option--letter-spacing: 0.12em;
 
-  --text-legal: 0.75rem;
-  --text-legal--line-height: 1.75;
-  --text-legal--letter-spacing: 0.03em;
+   --text-legal: 0.75rem;
+   --text-legal--line-height: 1.75;
+   --text-legal--letter-spacing: 0.03em;
 
-  --text-send: clamp(1.375rem, 2vw, 1.875rem);
-  --text-send--line-height: 1;
-  --text-send--letter-spacing: 0.14em;
+   --text-send: clamp(1.375rem, 2vw, 1.875rem);
+   --text-send--line-height: 1;
+   --text-send--letter-spacing: 0.14em;
 
-  --text-count: clamp(1.25rem, 2.4vw, 1.875rem);
-  --text-count--line-height: 1.2;
-  --text-count--letter-spacing: 0.14em;
+   --text-count: clamp(1.25rem, 2.4vw, 1.875rem);
+   --text-count--line-height: 1.2;
+   --text-count--letter-spacing: 0.14em;
 
-  /* ── BREAKPOINTS ───────────────────────────────────────────────────────
+   /* ── BREAKPOINTS ───────────────────────────────────────────────────────
      `--breakpoint-*: initial` clears Tailwind's defaults so there is exactly
      one scale in the codebase. Min-width only, mobile-first. Do not
      reintroduce a max-width query anywhere — mixing the two directions is
      what produced the old title-size inversion at 1440-1919. ──────────── */
-  --breakpoint-*: initial;
-  --breakpoint-sm: 30rem; /*  480 */
-  --breakpoint-md: 48rem; /*  768 */
-  --breakpoint-lg: 64rem; /* 1024 */
-  --breakpoint-xl: 80rem; /* 1280 */
-  --breakpoint-2xl: 90rem; /* 1440 */
-  --breakpoint-3xl: 120rem; /* 1920 */
+   --breakpoint-*: initial;
+   --breakpoint-sm: 30rem;
+   /*  480 */
+   --breakpoint-md: 48rem;
+   /*  768 */
+   --breakpoint-lg: 64rem;
+   /* 1024 */
+   --breakpoint-xl: 80rem;
+   /* 1280 */
+   --breakpoint-2xl: 90rem;
+   /* 1440 */
+   --breakpoint-3xl: 120rem;
+   /* 1920 */
 }
 
 /* Notes for whoever picks this up next:

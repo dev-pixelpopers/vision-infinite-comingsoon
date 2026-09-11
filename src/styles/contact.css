@@ -88,6 +88,22 @@
     U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+@font-face {
+  font-family: 'Bodera-Regular';
+  src: url('/assets/fonts/Bodera-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Corbert-Black';
+  src: url('/assets/fonts/Corbert-Black.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    BASE
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -206,7 +222,7 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
    has a bone ground under it whatever the video is doing. On ::after rather
    than on the wrap, because the wrap needs overflow:hidden hugging the text
    for the mask-reveal to clip. */
-.preloader::after {
+/* .preloader::after {
   content: "";
   position: absolute;
   inset: auto 0 0 0;
@@ -216,7 +232,7 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
       rgb(222 214 199 / 0.75) 45%,
       rgb(222 214 199 / 0));
   pointer-events: none;
-}
+} */
 
 .preloader--leaving {
   transform: translateY(-100%);
@@ -240,8 +256,7 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
 .preloader__percent-wrap {
   position: absolute;
   z-index: 1;
-  left: 0;
-  right: 0;
+  right: 2.5%;
   bottom: clamp(1rem, 2.5vw, 1.875rem);
   overflow: hidden;
   text-align: center;
