@@ -166,24 +166,32 @@ html[data-loaded] .reveal {
   transform: translateY(0);
 }
 
-html[data-loaded] .hero__title>*:nth-child(1) .reveal {
+/* Generic ladder, so the intro section can gain or lose a line without anyone
+   having to remember to renumber a hand-written list of delays. `.reveal` is
+   looked up through descendants, which lets the mailto/tel pair sit inside
+   their own flex row and still take the row's step. */
+html[data-loaded] .reveal-stagger>*:nth-child(1) .reveal {
   transition-delay: 0.06s;
 }
 
-html[data-loaded] .hero__title>*:nth-child(2) .reveal {
+html[data-loaded] .reveal-stagger>*:nth-child(2) .reveal {
   transition-delay: 0.14s;
 }
 
-html[data-loaded] .hero__lead .reveal {
+html[data-loaded] .reveal-stagger>*:nth-child(3) .reveal {
   transition-delay: 0.22s;
 }
 
-html[data-loaded] .hero__links>*:nth-child(1) .reveal {
+html[data-loaded] .reveal-stagger>*:nth-child(4) .reveal {
   transition-delay: 0.3s;
 }
 
-html[data-loaded] .hero__links>*:nth-child(2) .reveal {
-  transition-delay: 0.34s;
+html[data-loaded] .reveal-stagger>*:nth-child(5) .reveal {
+  transition-delay: 0.38s;
+}
+
+html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
+  transition-delay: 0.46s;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -216,23 +224,30 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
   z-index: 9999;
   transform: translateY(0);
   transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Scrim settling the foot of the frame into the page, so the counter always
-   has a bone ground under it whatever the video is doing. On ::after rather
-   than on the wrap, because the wrap needs overflow:hidden hugging the text
-   for the mask-reveal to clip. */
-/* .preloader::after {
+/* Scrim settling the foot of the frame into the page, so the script and the
+   counter always have a bone ground under them whatever frame the video is
+   on. Without it the copy lands on the middle of the drawing and is simply
+   unreadable. Deep enough to cover the whole script block; the gradient's top
+   stop is above the tallest line so there is no visible edge. On ::after
+   rather than on a wrapper, because the wrap needs overflow:hidden hugging
+   the text for the counter's mask-reveal to clip. */
+.preloader::after {
   content: "";
   position: absolute;
   inset: auto 0 0 0;
-  height: 9rem;
+  z-index: 1;
+  height: clamp(13rem, 34vh, 20rem);
   background: linear-gradient(to top,
-      rgb(222 214 199 / 0.96),
-      rgb(222 214 199 / 0.75) 45%,
+      rgb(222 214 199 / 0.99) 35%,
+      rgb(222 214 199 / 0.92) 60%,
       rgb(222 214 199 / 0));
   pointer-events: none;
-} */
+}
 
 .preloader--leaving {
   transform: translateY(-100%);
@@ -243,19 +258,71 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
 }
 
 .preloader__video {
-  position: absolute;
+  /* position: absolute; */
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  height: 50%;
   object-fit: contain;
   /* Knocks the video's white plate out against the bone overlay. See the
      section header. */
   mix-blend-mode: multiply;
+  /* The first beat of the script (0-2s) is the illustration arriving out of
+     the bone ground. Gated on `is-ready` — the same first-frame flag the
+     counter uses — so the fade plays instead of collapsing into the initial
+     paint. */
+  opacity: 0;
+  transition: opacity 1.8s cubic-bezier(0.33, 0, 0.2, 1);
+}
+
+.preloader.is-ready .preloader__video {
+  opacity: 1;
+}
+
+/* ── SCRIPT ──────────────────────────────────────────────────────────────
+   Sits in the lower third rather than dead centre, where the video's drawing
+   is. The width cap and the bottom offset together are what keep the longest
+   line clear of the counter in the bottom-right corner on a narrow screen. */
+.preloader__script {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: clamp(5.5rem, 14vh, 6rem);
+  width: min(46ch, 82vw);
+  margin-inline: auto;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* All five are stacked on one another and cross-faded; only `.is-active` is
+   visible. Absolute so the block never resizes as the copy changes length. */
+.preloader__line {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 2.4vw, 1.875rem);
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  text-wrap: balance;
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.preloader__line.is-active {
+  opacity: 1;
+  transform: none;
 }
 
 .preloader__percent-wrap {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   right: 2.5%;
   bottom: clamp(1rem, 2.5vw, 1.875rem);
   overflow: hidden;
@@ -297,6 +364,8 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
 .feedback {
   background: var(--color-paper);
   border-top: 1px solid var(--color-bronze);
+  /* The intro section's CTA jumps here by #contact. */
+  scroll-margin-top: 2rem;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -610,8 +679,8 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
   position: relative;
   max-width: 34rem;
   color: var(--color-muted);
-  font-family: var(--font-body);
-  font-size: var(--text-legal);
+  font-family: var(--font-sans);
+  font-size: var(--text-lead);
   line-height: 1.75;
   letter-spacing: var(--text-legal--letter-spacing);
   transition: color 0.3s;
@@ -782,6 +851,7 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
 
   .reveal,
   .preloader__percent,
+  .preloader__line,
   .feedback-popup-heading>span>span {
     transform: none !important;
     transition: none !important;
@@ -791,6 +861,13 @@ html[data-loaded] .hero__links>*:nth-child(2) .reveal {
      suppress. CSS cannot pause playback, so Preloader.tsx also calls
      .pause() on the element — both are needed. */
   .preloader__video {
+    display: none;
+  }
+
+  /* The 14s script is the whole reason this overlay lingers, so it is the
+     first thing to go. Preloader.tsx also skips scheduling the cues — this
+     is belt and braces for the frame before that effect runs. */
+  .preloader__script {
     display: none;
   }
 

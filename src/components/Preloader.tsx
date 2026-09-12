@@ -3,16 +3,31 @@
 import { useEffect, useRef, useState } from "react";
 import { useLoadProgress } from "@/hooks/useLoadProgress";
 import { cx } from "@/lib/cx";
+import { PRELOADER_CUES, PRELOADER_DURATION_MS } from "@/lib/preloader-script";
 
-/** Hard ceiling — if anything goes wrong, the page reveals itself anyway. */
-const FAILSAFE_MS = 8000;
+/**
+ * Hard ceiling — if anything goes wrong, the page reveals itself anyway.
+ *
+ * Sized against the full script: PRELOADER_DURATION_MS + `hold` + `lift` is
+ * ~15.2s, so this has to clear that with margin or the failsafe would guillotine
+ * the sequence mid-line. Raise it with the script, never independently.
+ */
+const FAILSAFE_MS = PRELOADER_DURATION_MS + 4_000;
 
 export function Preloader() {
-  const { pctRef, complete } = useLoadProgress();
+  const { pctRef, complete } = useLoadProgress({
+    min: PRELOADER_DURATION_MS,
+    max: PRELOADER_DURATION_MS + 4_000,
+    // The counter walks the script: 2s->14%, 4s->29%, 7s->50%, 10s->71%,
+    // 12s->86%, 14s->100%. easeOutCubic would be at 90% before the second line.
+    ease: "linear",
+  });
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [ready, setReady] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [done, setDone] = useState(false);
+  /** Index into PRELOADER_CUES, or -1 for the gaps at either end. */
+  const [cue, setCue] = useState(-1);
 
   // Lock scrolling for as long as the overlay is up.
   useEffect(() => {
@@ -39,6 +54,19 @@ export function Preloader() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       videoRef.current?.pause();
     }
+  }, []);
+
+  // The script. Skipped outright under reduced motion: those users get
+  // floor = 0 from the hook, so the counter completes on the first frame and
+  // the overlay is gone long before any of these would have fired.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timers = PRELOADER_CUES.map((c, i) => setTimeout(() => setCue(i), c.at));
+    // Clear the last line before the lift, so the overlay leaves empty.
+    timers.push(setTimeout(() => setCue(-1), PRELOADER_DURATION_MS));
+
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   const reveal = () => {
@@ -84,7 +112,6 @@ export function Preloader() {
         leaving && "preloader--leaving",
         done && "preloader--done",
       )}
-      /* Decoration. Screen readers should not narrate "47%". */
       aria-hidden="true"
     >
       <video
@@ -99,6 +126,14 @@ export function Preloader() {
         tabIndex={-1}
         disablePictureInPicture
       />
+
+      <div className="preloader__script">
+        {PRELOADER_CUES.map((c, i) => (
+          <p key={c.at} className={cx("preloader__line", i === cue && "is-active")}>
+            {c.text}
+          </p>
+        ))}
+      </div>
 
       <div className="preloader__percent-wrap">
         <span className="preloader__percent" ref={pctRef}>

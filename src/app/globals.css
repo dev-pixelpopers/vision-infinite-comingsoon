@@ -12,6 +12,12 @@
      face drops in by changing one src: url() line. ─────────────────────── */
    --font-display: "Bodera-Regular", "Iowan Old Style", Georgia, serif;
    --font-body: "Corbert-Black", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+   /* Corbert-Black is a BLACK weight declared as `font-weight: normal`, so its
+      heaviness is baked into the family and no utility can lighten it. Running
+      copy therefore takes `font-sans`, not `font-body` — Jost is variable over
+      300-600, which is where `font-light` comes from. Keep font-body for the
+      short uppercase bits (labels, meta, credits) it was chosen for. */
+   --font-sans: "Jost", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
    /* ── BRAND ─────────────────────────────────────────────────────────────
      Contrast, computed (WCAG 2.x relative luminance):
@@ -52,13 +58,20 @@
    --color-invalid: #8e2b1b;
 
    /* ── TYPE SCALE ────────────────────────────────────────────────────────
-     Valturin has ONE static weight. Hierarchy is size + case + tracking +
-     colour only — there is not a single weight step anywhere in this design.
+     Bodera and Corbert are both single static weights, so hierarchy here is
+     size + case + tracking + colour. The ONE weight step in the design is
+     running copy, which switches family to Jost at 300 (see --font-sans).
      Each --text-* carries its own line-height and tracking, so the JSX says
      `text-display` and gets all three at once. ─────────────────────────── */
    --text-display: clamp(3.5rem, 7vw, 6.5rem);
    --text-display--line-height: 1;
    --text-display--letter-spacing: 0.1em;
+
+   /* Section heading. --text-display was sized for the two words "Coming
+      Soon" and tears a real sentence apart. */
+   --text-heading: clamp(1.75rem, 3.6vw, 3rem);
+   --text-heading--line-height: 1.15;
+   --text-heading--letter-spacing: 0.06em;
 
    --text-lead: clamp(0.875rem, 0.6vw + 0.7rem, 1rem);
    --text-lead--line-height: 1.75;

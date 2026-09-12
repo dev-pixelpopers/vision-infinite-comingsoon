@@ -47,6 +47,7 @@ export const COVERAGE_OPTIONS = ["1 Day", "2 Days", "3 Days", "4+ Days"] as cons
  */
 export const FIELDS = [
   { name: "fullName", label: "Full name", kind: "text", required: true, autoComplete: "name" },
+  { name: "fiance", label: "Fiancé's name", kind: "text" },
   { name: "email", label: "Email", kind: "email", required: true, autoComplete: "email" },
   {
     name: "location",

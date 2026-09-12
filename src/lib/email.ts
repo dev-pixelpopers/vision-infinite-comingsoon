@@ -3,6 +3,7 @@ import type { ContactInput } from "./schema";
 /** Form order, so the recipient sees every enquiry laid out identically. */
 const ROWS: ReadonlyArray<readonly [string, keyof ContactInput]> = [
   ["Full name", "fullName"],
+  ["Fiancé's name", "fiance"],
   ["Email", "email"],
   ["Where do you live?", "location"],
   ["Event type", "eventType"],

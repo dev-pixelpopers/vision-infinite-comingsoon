@@ -171,7 +171,10 @@ export function ContactForm() {
             className="group ms-auto flex shrink-0 items-center gap-5 font-display text-send uppercase text-ink transition-colors duration-300 hover:text-bronze disabled:cursor-progress disabled:text-idle"
             disabled={pending}
           >
-            <span className="inline-block min-w-[4.4em] text-right me-[-0.14em] max-md:sr-only">
+            {/* min-w must NOT apply below md: `sr-only` sets width:1px, and a
+                min-width beats it, leaving a ~96px absolutely-positioned box
+                hanging off the right edge and a horizontal scrollbar with it. */}
+            <span className="inline-block md:min-w-[4.4em] text-right me-[-0.14em] max-md:sr-only">
               {pending ? "Sending" : "Send"}
             </span>
             {/* <svg

@@ -19,6 +19,7 @@ const optionalText = (max: number) => z.string().trim().max(max).optional().defa
 
 export const contactSchema = z.object({
   fullName: z.string().trim().min(2, "Please enter your name").max(120),
+  fiance: optionalText(120),
   email: z.string().trim().toLowerCase().max(254).pipe(
     z.email("Please enter a valid email address"),
   ),

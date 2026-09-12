@@ -2,7 +2,15 @@ import Image from "next/image";
 import { Preloader } from "@/components/Preloader";
 import { ContactForm } from "@/components/ContactForm";
 import { Footer } from "@/components/Footer";
-import { CONTACT_EMAIL, CONTACT_PHONE, HERO_PARAGRAPH } from "@/lib/site";
+import {
+  CONTACT_EMAIL,
+  CONTACT_PHONE,
+  FORM_INTRO,
+  INTRO_CTA,
+  INTRO_HEADING,
+  INTRO_INVITE,
+  INTRO_PARAGRAPH,
+} from "@/lib/site";
 
 /**
  * Server Component.
@@ -16,56 +24,67 @@ export default function Page() {
     <div className="page-wrapper">
       <Preloader />
 
-      <section className="hero mx-auto flex w-full flex-row justify-around items-center px-4 pt-10 pb-16 text-center md:px-8 md:py-10">
+      {/* Logo only. Do NOT add `isolation` to this element or any wrapper
+          between body and the image — contact.css explains why: body's
+          isolation is the blending group the mix-blend-multiply needs to knock
+          the PNG's white plate out against the bone page. */}
+      <header className="site-header w-full px-4 pt-12 pb-8 text-center md:px-8 md:pt-16">
         <span className="reveal-wrap">
-          <Image
-            className="reveal h-auto w-[168px] mix-blend-multiply md:w-[210px] xl:w-[240px]"
-            src="/assets/images/Vision-Infinie-logo.png"
-            alt="Vision infinie — luxury wedding creative, by Stavan Shah"
-            width={274}
-            height={219}
-            priority
-            unoptimized
-          />
+          <a href="/">
+            <Image
+              className="reveal mx-auto h-auto w-[252px] mix-blend-multiply md:w-[315px] xl:w-[360px]"
+              src="/assets/images/Vision-Infinie-logo.png"
+              alt="Vision infinie — luxury wedding creative, by Stavan Shah"
+              width={274}
+              height={219}
+              priority
+              unoptimized
+            />
+          </a>
         </span>
+      </header>
 
+      <section className="intro reveal-stagger mx-auto w-full max-w-[60rem] px-4 pb-16 text-center md:px-8 md:pb-24">
         <span
           aria-hidden="true"
-          className="mt-10 block h-px w-16 bg-bronze md:mt-12 md:w-20"
+          className="mx-auto mb-10 block h-px w-16 bg-bronze md:mb-12 md:w-20"
         />
 
-        <h1 className="hero__title flex flex-col font-display text-display uppercase text-ink">
-          Coming Soon
-        </h1>
+        <span className="reveal-wrap block">
+          <h1 className="reveal font-display text-heading uppercase text-ink">
+            {INTRO_HEADING}
+          </h1>
+        </span>
 
-        <div className="hero__links flex flex-col items-center gap-5 font-body text-meta uppercase text-ink md:gap-12">
-          <div className="hero__lead reveal-wrap mt-8 md:mt-10">
-            <p className="reveal mx-auto max-w-[52ch] font-body text-lead text-muted">
-              {HERO_PARAGRAPH}
-            </p>
-          </div>
-          <div className="flex flex-row items-center gap-5 font-body text-meta uppercase text-ink md:flex-row md:gap-12">
-            <span className="reveal-wrap">
-              <a className="reveal shrink-underline" href={`mailto:${CONTACT_EMAIL}`}>
-                {CONTACT_EMAIL}
-              </a>
-            </span>
-            <span className="reveal-wrap">
-              <a
-                className="reveal shrink-underline"
-                href={`tel:${CONTACT_PHONE.replace(/[^+\d]/g, "")}`}
-              >
-                {CONTACT_PHONE}
-              </a>
-            </span>
-          </div>
-        </div>
+        <span className="reveal-wrap mt-8 block">
+          <p className="reveal mx-auto max-w-[56ch] font-sans text-lead font-light text-muted">
+            {INTRO_PARAGRAPH}
+          </p>
+        </span>
+
+        <span className="reveal-wrap mt-6 block">
+          <p className="reveal mx-auto max-w-[48ch] font-sans text-lead font-light text-ink">
+            {INTRO_INVITE}
+          </p>
+        </span>
+
+        <span className="reveal-wrap mt-10 block">
+          <a
+            className="reveal shrink-underline inline-block font-body text-meta uppercase text-ink"
+            href="#contact"
+          >
+            {INTRO_CTA}
+          </a>
+        </span>
       </section>
 
-      <section className="feedback" aria-labelledby="contact-form-heading">
+      <section className="feedback" id="contact" aria-labelledby="contact-form-heading">
         <h2 id="contact-form-heading" className="sr-only">
           Contact form
         </h2>
+        <p className="mx-auto max-w-[52ch] px-4 pt-12 text-center font-sans text-lead font-light text-muted md:px-8 md:pt-16">
+          {FORM_INTRO}
+        </p>
         <ContactForm />
       </section>
 

@@ -9,6 +9,14 @@ type Options = {
   max?: number;
   /** Ease-in window when load fires after we have already stalled at 90%. */
   release?: number;
+  /**
+   * Shape of the ramp across `min`.
+   *
+   * `out-cubic` front-loads the count, which reads well over a short overlay.
+   * `linear` is for a SCRIPTED overlay: when copy appears on fixed cues, the
+   * counter has to advance at the same even pace or the two visibly disagree.
+   */
+  ease?: "out-cubic" | "linear";
 };
 
 /** Background tabs suspend rAF entirely, so a timer backs it up. */
@@ -19,7 +27,7 @@ const WATCHDOG_MS = 200;
  *
  * A fixed timer alone would hit 100% while the page is still blank, which is
  * exactly the lie a preloader exists to avoid. So this combines a real load
- * signal with a floor duration: an easeOutCubic ramp that stalls at 90% until
+ * signal with a floor duration: a ramp (see `ease`) that stalls at 90% until
  * `window.load` fires, then eases the remaining stretch so there is no jump.
  * The ramp is always the ceiling, which is what makes `min` a genuine floor
  * even when the page comes warm from cache and `load` has already fired.
@@ -32,6 +40,7 @@ export function useLoadProgress<T extends HTMLElement = HTMLSpanElement>({
   min = 1800,
   max = 6000,
   release = 450,
+  ease = "out-cubic",
 }: Options = {}) {
   const [complete, setComplete] = useState(false);
   const pctRef = useRef<T | null>(null);
@@ -64,8 +73,9 @@ export function useLoadProgress<T extends HTMLElement = HTMLSpanElement>({
       if (finished || !live) return;
 
       const elapsed = now - start;
-      // easeOutCubic across the floor duration; reaches exactly 1 at `floor`.
-      const ramp = floor === 0 ? 1 : 1 - Math.pow(1 - Math.min(elapsed / floor, 1), 3);
+      // Across the floor duration; either shape reaches exactly 1 at `floor`.
+      const t = floor === 0 ? 1 : Math.min(elapsed / floor, 1);
+      const ramp = ease === "linear" ? t : 1 - Math.pow(1 - t, 3);
       const free = loaded || elapsed >= max;
 
       let p: number;
@@ -114,7 +124,7 @@ export function useLoadProgress<T extends HTMLElement = HTMLSpanElement>({
       clearInterval(watchdog);
       window.removeEventListener("load", onLoad);
     };
-  }, [min, max, release]);
+  }, [min, max, release, ease]);
 
   return { pctRef, complete };
 }
