@@ -20,7 +20,7 @@ export const CONTACT_PHONE_PRETTY = "+00 (0) 000 000 0000";
 export const INTRO_HEADING = "The Next Chapter of Vision infinie";
 
 export const INTRO_PARAGRAPH =
-  "Our new website is coming soon \u2014 thoughtfully designed to reflect our evolving vision, timeless storytelling, and the unforgettable celebrations we are honored to preserve.";
+  "Our new website is coming soon thoughtfully designed to reflect our evolving vision, timeless storytelling, and the unforgettable celebrations we are honored to preserve.";
 
 export const INTRO_INVITE = "In the meantime, we would love to hear your story.";
 
@@ -29,4 +29,4 @@ export const INTRO_CTA = "Start your journey with us";
 /** Sits above the form rather than in the header: it is about how to use the
     form, and the intro section now says what the header used to. */
 export const FORM_INTRO =
-  "To reach Vision infinie or to request a detailed collection of our services, please feel free to fill out your information and we will contact you within 24 hours.";
+  "Before we photograph your celebration, we want to know the hearts behind it. Share a little about the two of you, the people you love, and the experience you are dreaming of. We will personally reach out within 24 hours to begin creating something deeply meaningful together.";
