@@ -120,11 +120,11 @@
    between body and that image — it would isolate the logo from the bone
    backdrop and composite it against transparent black instead. */
 html {
-  background: var(--color-page);
+  background: var(--color-white);
 }
 
 body {
-  background: var(--color-page);
+  background: var(--color-white);
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: 1rem;
@@ -217,7 +217,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   height: 100dvh;
   /* Also the letterbox bars, and the pre-decode ground before the first
      frame paints — so there is never a white flash. */
-  background: var(--color-page);
+  background: var(--color-white);
   /* Contains the video's multiply so it blends against this element's bone
      background and never reaches through to the page beneath. */
   isolation: isolate;
@@ -356,13 +356,13 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .page-wrapper {
-  background-color: var(--color-page);
+  background-color: var(--color-white);
 }
 
 /* The paper panel is announced by a bronze rule rather than a tone change —
    the single strongest departure from the reference's grey-box treatment. */
 .feedback {
-  background: var(--color-paper);
+  background: var(--color-white);
   border-top: 1px solid var(--color-bronze);
   /* The intro section's CTA jumps here by #contact. */
   scroll-margin-top: 2rem;
@@ -642,7 +642,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
 .dropdown__button.is-active,
 .dropdown__item[aria-selected="true"] {
   color: var(--color-ink);
-  background: var(--color-paper);
+  background: var(--color-white);
   box-shadow: inset 2px 0 0 var(--color-bronze);
   outline: none;
 }

@@ -64,7 +64,6 @@ export function ContactForm() {
   return (
     <>
       <form className="contact-form" action={formAction} noValidate>
-        {/* anti-spam: bots fill this, humans never see it */}
         <input
           className="contact-form__hp"
           type="text"
@@ -140,7 +139,7 @@ export function ContactForm() {
           );
         })}
 
-        <div className="col-span-full mt-8 flex w-full flex-col items-start justify-between gap-10 pb-16 md:mt-12 md:flex-row md:pb-24 lg:pb-32">
+        <div className="col-span-full mt-8 flex w-full flex-col items-start justify-between gap-10 pb-16 md:mt-12 md:pb-24 lg:pb-32">
           <div className="flex flex-col gap-3">
             <ConsentCheckbox
               checked={consent}
@@ -160,47 +159,21 @@ export function ContactForm() {
             </span>
           </div>
 
-          {/* The arrow is inlined rather than loaded through next/image so the
-              glyph can ride `currentColor` through the hover transition — an
-              <img> cannot. Hover is ink -> bronze, not a fade: dimming ink on
-              a warm ground goes muddy. `min-w-[4.4em]` pins the arrow across
-              the SEND -> SENDING swap (2.473em -> 4.131em in Valturin). */}
-          <button
-            ref={sendRef}
-            type="submit"
-            className="group ms-auto flex shrink-0 items-center gap-5 font-display text-send uppercase text-ink transition-colors duration-300 hover:text-bronze disabled:cursor-progress disabled:text-idle"
-            disabled={pending}
-          >
-            {/* min-w must NOT apply below md: `sr-only` sets width:1px, and a
-                min-width beats it, leaving a ~96px absolutely-positioned box
-                hanging off the right edge and a horizontal scrollbar with it. */}
-            <span className="inline-block md:min-w-[4.4em] text-right me-[-0.14em] max-md:sr-only">
-              {pending ? "Sending" : "Send"}
-            </span>
-            {/* <svg
-              viewBox="0 0 168 168"
-              fill="none"
-              aria-hidden="true"
-              className="size-[5.625rem] shrink-0 transition-transform duration-200 group-hover:translate-x-1 lg:size-[7.875rem] 3xl:size-[10.5rem]"
+          <div className="w-full flex items-center justify-center gap-5">
+            <button
+              ref={sendRef}
+              type="submit"
+              className="group flex shrink-0 items-center gap-5 font-display text-send uppercase text-ink transition-colors duration-300 hover:text-bronze disabled:cursor-progress disabled:text-idle"
+              disabled={pending}
             >
-              <circle
-                cx="84"
-                cy="84"
-                r="83"
-                stroke="var(--color-bronze)"
-                strokeWidth="1"
-              />
-              <path
-                d="M60 84h48M92 68l16 16-16 16"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="square"
-              />
-            </svg> */}
-            <svg className="size-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 12H20M20 12L16 8M20 12L16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+              <span className="inline-block text-left">
+                {pending ? "Counting you in" : "Count us in"}
+              </span>
+              <svg className="size-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 12H20M20 12L16 8M20 12L16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       </form>
 

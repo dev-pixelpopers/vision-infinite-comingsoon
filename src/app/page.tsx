@@ -32,7 +32,7 @@ export default function Page() {
         <span className="reveal-wrap">
           <a href="/">
             <Image
-              className="reveal mx-auto h-auto w-[252px] mix-blend-multiply md:w-[315px] xl:w-[360px]"
+              className="reveal mx-auto h-auto w-[252px] mix-blend-multiply md:w-[315px] xl:w-[290px]"
               src="/assets/images/Vision-Infinie-logo.png"
               alt="Vision infinie — luxury wedding creative, by Stavan Shah"
               width={274}
@@ -55,6 +55,8 @@ export default function Page() {
             {INTRO_HEADING}
           </h1>
         </span>
+
+        <img className="reveal mt-8 mx-auto h-auto w-[400px] mix-blend-multiply md:w-[650px] xl:w-[850px]" src="/assets/images/main_image.jpeg" alt="" />
 
         <span className="reveal-wrap mt-8 block">
           <p className="reveal mx-auto max-w-[56ch] font-sans text-lead font-light text-muted">
