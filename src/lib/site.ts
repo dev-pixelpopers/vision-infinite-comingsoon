@@ -24,7 +24,7 @@ export const INTRO_PARAGRAPH =
 
 export const INTRO_INVITE = "In the meantime, we would love to hear your story.";
 
-export const INTRO_CTA = "Start your journey with us";
+export const INTRO_CTA = "contact us";
 
 /** Sits above the form rather than in the header: it is about how to use the
     form, and the intro section now says what the header used to. */

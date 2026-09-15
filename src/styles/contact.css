@@ -217,7 +217,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   height: 100dvh;
   /* Also the letterbox bars, and the pre-decode ground before the first
      frame paints — so there is never a white flash. */
-  background: var(--color-white);
+  background: var(--color-page);
   /* Contains the video's multiply so it blends against this element's bone
      background and never reaches through to the page beneath. */
   isolation: isolate;
@@ -362,7 +362,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
 /* The paper panel is announced by a bronze rule rather than a tone change —
    the single strongest departure from the reference's grey-box treatment. */
 .feedback {
-  background: var(--color-white);
+  background: var(--color-page);
   border-top: 1px solid var(--color-bronze);
   /* The intro section's CTA jumps here by #contact. */
   scroll-margin-top: 2rem;
