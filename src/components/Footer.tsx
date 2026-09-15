@@ -26,7 +26,7 @@ export function Footer() {
           <a href="/">
             <Image
               className="h-auto mix-blend-multiply"
-              src="/assets/images/footer-logo.png"
+              src="/assets/images/footer-logo-updated.png"
               alt="Vision infinie"
               width={274}
               height={219}

@@ -2,13 +2,13 @@
 
 export const SITE_NAME = "Vision infinie";
 
-export const CONTACT_EMAIL = "hello@visioninfinie.com";
+export const CONTACT_EMAIL = "info@visioninfinie.com";
 
 /** Raw value; the tel: href strips everything but digits and a leading +. */
-export const CONTACT_PHONE = "+00 000 000 0000";
+export const CONTACT_PHONE = "+(408) 921-4713";
 
 /** Display form, as the reference renders it in the footer. */
-export const CONTACT_PHONE_PRETTY = "+00 (0) 000 000 0000";
+export const CONTACT_PHONE_PRETTY = "+(408) 921-4713";
 
 /* ── INTRO SECTION ──────────────────────────────────────────────────────────
    The page's actual message, carrying the <h1>. Two house-style corrections

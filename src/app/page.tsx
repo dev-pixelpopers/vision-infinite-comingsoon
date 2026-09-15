@@ -32,8 +32,8 @@ export default function Page() {
         <span className="reveal-wrap">
           <a href="/">
             <Image
-              className="reveal mx-auto h-auto w-[252px] mix-blend-multiply md:w-[315px] xl:w-[290px]"
-              src="/assets/images/Vision-Infinie-logo.png"
+              className="reveal mx-auto h-auto w-[252px] mix-blend-multiply md:w-[315px] xl:w-[400px]"
+              src="/assets/images/footer-logo-updated.png"
               alt="Vision infinie — luxury wedding creative, by Stavan Shah"
               width={274}
               height={219}
