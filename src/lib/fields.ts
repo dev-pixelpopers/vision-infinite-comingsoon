@@ -6,7 +6,7 @@
  * these option lists lives in ./schema.ts, which is server-only.
  */
 
-export type FieldKind = "text" | "email" | "select" | "date" | "textarea";
+export type FieldKind = "text" | "email" | "select" | "date" | "textarea" | "number";
 
 export type FieldDef = {
   readonly name: string;
@@ -49,14 +49,14 @@ export const FIELDS = [
   { name: "fullName", label: "Full name", kind: "text", required: true, autoComplete: "name" },
   { name: "fiance", label: "Fiancé's name", kind: "text" },
   { name: "email", label: "Email", kind: "email", required: true, autoComplete: "email" },
-  { name: "date", label: "Date", kind: "date", required: true, },
+  { name: "phone", label: "Phone", kind: "text", required: true, autoComplete: "tel" },
+  { name: "date", label: "Date", kind: "date", required: true },
   { name: "eventLocation", label: "Event location", kind: "text" },
-  { name: "guestCount", label: "Guest count", kind: "select", options: GUEST_COUNT_OPTIONS },
+  { name: "guestCount", label: "Guest count", kind: "number", required: true },
   {
     name: "coverage",
-    label: "Planned investment",
-    kind: "select",
-    options: COVERAGE_OPTIONS,
+    label: "Planned investment days",
+    kind: "number",
     required: true,
   },
   { name: "weddingPlanner", label: "Wedding Planner Name", kind: "text", autoComplete: "name" },

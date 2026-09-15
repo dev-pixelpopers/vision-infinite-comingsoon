@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLoadProgress } from "@/hooks/useLoadProgress";
 import { cx } from "@/lib/cx";
 import { PRELOADER_CUES, PRELOADER_DURATION_MS } from "@/lib/preloader-script";
+import Image from "next/image";
 
 /**
  * Hard ceiling — if anything goes wrong, the page reveals itself anyway.
@@ -15,7 +16,7 @@ import { PRELOADER_CUES, PRELOADER_DURATION_MS } from "@/lib/preloader-script";
 const FAILSAFE_MS = PRELOADER_DURATION_MS + 4_000;
 
 export function Preloader() {
-  const { pctRef, complete } = useLoadProgress({
+  const { pctRef, progressRef, complete } = useLoadProgress({
     min: PRELOADER_DURATION_MS,
     max: PRELOADER_DURATION_MS + 4_000,
     // The counter walks the script: 2s->14%, 4s->29%, 7s->50%, 10s->71%,
@@ -106,6 +107,7 @@ export function Preloader() {
 
   return (
     <div
+      ref={progressRef}
       className={cx(
         "preloader",
         ready && "is-ready",
@@ -114,7 +116,7 @@ export function Preloader() {
       )}
       aria-hidden="true"
     >
-      <video
+      {/* <video
         ref={videoRef}
         className="preloader__video"
         src="/assets/videos/preloader_video_2.mp4"
@@ -125,6 +127,15 @@ export function Preloader() {
         preload="auto"
         tabIndex={-1}
         disablePictureInPicture
+      /> */}
+      <Image
+        className="preloader__logo mx-auto h-auto w-[400px] mix-blend-multiply md:w-[700px] xl:w-[800px]"
+        src="/assets/images/footer-logo-updated.png"
+        alt="Vision infinie — luxury wedding creative, by Stavan Shah"
+        width={274}
+        height={219}
+        priority
+        unoptimized
       />
 
       <div className="preloader__script">

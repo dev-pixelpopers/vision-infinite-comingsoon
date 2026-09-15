@@ -33,10 +33,15 @@ const WATCHDOG_MS = 200;
  * even when the page comes warm from cache and `load` has already fired.
  *
  * Progress is written to `pctRef` imperatively rather than through state —
- * otherwise this would trigger ~100 React renders during load. `complete`
- * flips exactly once.
+ * otherwise this would trigger ~100 React renders during load. `progressRef`
+ * is the same trick for CSS: attach it to any element and that element gets a
+ * `--load` custom property carrying raw 0..1 progress, which a mask, width or
+ * transform can be driven from. `complete` flips exactly once.
  */
-export function useLoadProgress<T extends HTMLElement = HTMLSpanElement>({
+export function useLoadProgress<
+  T extends HTMLElement = HTMLSpanElement,
+  P extends HTMLElement = HTMLDivElement,
+>({
   min = 1800,
   max = 6000,
   release = 450,
@@ -44,6 +49,7 @@ export function useLoadProgress<T extends HTMLElement = HTMLSpanElement>({
 }: Options = {}) {
   const [complete, setComplete] = useState(false);
   const pctRef = useRef<T | null>(null);
+  const progressRef = useRef<P | null>(null);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -96,6 +102,10 @@ export function useLoadProgress<T extends HTMLElement = HTMLSpanElement>({
       p = Math.max(progressLast, Math.min(1, p));
       progressLast = p;
 
+      // Every frame, not only when the rounded percentage ticks over: this
+      // drives a continuous reveal, so 1/100ths of a step are still visible.
+      progressRef.current?.style.setProperty("--load", p.toFixed(4));
+
       const shown = Math.max(1, Math.round(p * 100));
       if (shown !== shownLast && pctRef.current) {
         pctRef.current.textContent = `${shown}%`;
@@ -126,5 +136,5 @@ export function useLoadProgress<T extends HTMLElement = HTMLSpanElement>({
     };
   }, [min, max, release, ease]);
 
-  return { pctRef, complete };
+  return { pctRef, progressRef, complete };
 }

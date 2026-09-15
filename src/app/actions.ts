@@ -81,7 +81,7 @@ export async function submitContact(
       from,
       to: [to],
       replyTo: data.email,
-      subject: `New enquiry — ${data.fullName} · ${data.eventType}`,
+      subject: `New enquiry — ${data.fullName} · ${data.date}`,
       text: buildPlainText(data),
       html: buildHtml(data),
     });

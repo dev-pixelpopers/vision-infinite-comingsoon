@@ -4,7 +4,6 @@ import { useActionState, useRef, useState } from "react";
 import { submitContact } from "@/app/actions";
 import { ConsentCheckbox } from "./ConsentCheckbox";
 import { DateField } from "./DateField";
-import { Dropdown } from "./Dropdown";
 import { SuccessPopup } from "./SuccessPopup";
 import { TextField } from "./TextField";
 import { EMPTY_VALUES, FIELDS, type FieldName } from "@/lib/fields";
@@ -13,7 +12,7 @@ import { INITIAL_CONTACT_STATE } from "@/lib/contact-types";
 export function ContactForm() {
   const [values, setValues] = useState<Record<FieldName, string>>(EMPTY_VALUES);
   const [focused, setFocused] = useState<FieldName | null>(null);
-  const [openMenu, setOpenMenu] = useState<FieldName | null>(null);
+  // const [openMenu, setOpenMenu] = useState<FieldName | null>(null);
   const [consent, setConsent] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -81,24 +80,24 @@ export function ContactForm() {
           const error = errorFor(name);
           const invalid = Boolean(error);
 
-          if (field.kind === "select") {
-            return (
-              <Dropdown
-                key={name}
-                id={id}
-                name={name}
-                label={field.label}
-                options={field.options}
-                value={value}
-                open={openMenu === name}
-                invalid={invalid}
-                required={"required" in field ? field.required : undefined}
-                error={error}
-                onChange={(v) => set(name, v)}
-                onOpenChange={(open) => setOpenMenu(open ? name : null)}
-              />
-            );
-          }
+          // if (field.kind === "select") {
+          //   return (
+          //     <Dropdown
+          //       key={name}
+          //       id={id}
+          //       name={name}
+          //       label={field.label}
+          //       options={field.options}
+          //       value={value}
+          //       open={openMenu === name}
+          //       invalid={invalid}
+          //       required={"required" in field ? field.required : undefined}
+          //       error={error}
+          //       onChange={(v) => set(name, v)}
+          //       onOpenChange={(open) => setOpenMenu(open ? name : null)}
+          //     />
+          //   );
+          // }
 
           if (field.kind === "date") {
             return (
@@ -166,7 +165,7 @@ export function ContactForm() {
               className="group flex shrink-0 items-center gap-5 font-display text-send uppercase text-ink transition-colors duration-300 hover:text-bronze disabled:cursor-progress disabled:text-idle"
               disabled={pending}
             >
-              <span className="inline-block text-left">
+              <span className="inline-block text-left font-bold shrink-underline">
                 {pending ? "Counting you in" : "Count us in"}
               </span>
               <svg className="size-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

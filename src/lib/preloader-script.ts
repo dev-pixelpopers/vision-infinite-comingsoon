@@ -10,24 +10,24 @@
  * only stay in step if they share one number.
  */
 
-export const PRELOADER_DURATION_MS = 31_000;
+export const PRELOADER_DURATION_MS = 22_000;
 
 export const PRELOADER_CUES = [
-  { at: 2_000, until: 5_000, text: "Life moves quickly." },
+  { at: 2_000, until: 5_000, text: "Our new website is coming soon" },
   {
     at: 5_000,
     until: 12_000,
-    text: "Your wedding is one of the rare moments worth slowing down for.",
+    text: "Thoughtfully designed to reflect our evolving vision timeless vision",
   },
   {
     at: 12_000,
-    until: 20_000,
-    text: "Be fully in it. Feel it deeply. Let us preserve the people, the emotion, and the moments that matter most.",
+    until: 18_000,
+    text: "and the unforgettable celebrations we are honored to preserve",
   },
   {
-    at: 20_000,
-    until: 25_000,
-    text: "So years from now, you don\u2019t just remember the day.",
+    at: 18_000,
+    until: 22_000,
+    text: "In the meantime we would love to hear your story",
   },
-  { at: 25_000, until: 31_000, text: "You carry its legacy forward." },
+  // { at: 25_000, until: 31_000, text: "You carry its legacy forward." },
 ] as const;

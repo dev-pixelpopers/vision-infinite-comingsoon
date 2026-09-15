@@ -98,7 +98,7 @@
 
 @font-face {
   font-family: 'Corbert-Black';
-  src: url('/assets/fonts/Corbert-Black.otf') format('opentype');
+  src: url('/assets/fonts/poppins-bold.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -278,6 +278,41 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   opacity: 1;
 }
 
+/* ── LOGO ────────────────────────────────────────────────────────────────
+   Unmasked bottom-to-top in lockstep with the counter rather than fading in
+   on its own clock: `--load` is raw 0..1 progress, written to .preloader
+   every frame by useLoadProgress, so the drawing finishes arriving exactly
+   as the count reaches 100%.
+
+   The 118% / ±9% overshoot is what lets the feathered edge clear the top of
+   the logo at --load: 1 — with a flat 100% the last ~9% would still sit in
+   the gradient's transparent tail and never fully arrive. */
+.preloader__logo {
+  /* NOT `--load: 0` here — a declaration on this element would shadow the value
+     the hook writes to .preloader, pinning the mask shut. The fallback belongs
+     in var()'s second argument, where the inherited value still wins. */
+  -webkit-mask-image: linear-gradient(to top,
+      #000 calc(var(--load, 0) * 118% - 9%),
+      transparent calc(var(--load, 0) * 118% + 9%));
+  mask-image: linear-gradient(to top,
+      #000 calc(var(--load, 0) * 118% - 9%),
+      transparent calc(var(--load, 0) * 118% + 9%));
+}
+
+/* Never lift off screen mid-reveal. If the failsafe fires or the counter
+   stalls, the logo is whole on the way out. */
+.preloader--leaving .preloader__logo {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader__logo {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
 /* ── SCRIPT ──────────────────────────────────────────────────────────────
    Sits in the lower third rather than dead centre, where the video's drawing
    is. The width cap and the bottom offset together are what keep the longest
@@ -288,7 +323,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   left: 0;
   right: 0;
   bottom: clamp(5.5rem, 14vh, 6rem);
-  width: "800px";
+  max-width: 800px;
   margin-inline: auto;
   text-align: center;
   pointer-events: none;
@@ -425,7 +460,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   color: var(--color-idle);
   font-family: var(--font-display);
   /* 400 is the ONLY weight Valturin has. Anything else is synthetic bold. */
-  font-weight: 400;
+  font-weight: 600;
   font-size: var(--text-field);
   /* line-height 1 on both is what makes the flex-end alignment exact: the
      control's line box and the resting label's box share a bottom edge. */
@@ -457,7 +492,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   left: var(--field-pad-x);
   bottom: var(--field-pad-y);
   margin: 0;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: 0.06em;
   pointer-events: none;
   white-space: nowrap;
@@ -677,7 +712,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
    text people are being asked to agree to. */
 .checkbox-paragraph {
   position: relative;
-  max-width: 34rem;
+  max-width: 100%;
   color: var(--color-muted);
   font-family: var(--font-sans);
   font-size: var(--text-lead);

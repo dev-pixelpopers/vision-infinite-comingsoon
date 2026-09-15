@@ -5,7 +5,7 @@ type Props = {
   id: string;
   name: string;
   label: string;
-  kind: "text" | "email" | "textarea";
+  kind: "text" | "email" | "textarea" | "number";
   value: string;
   active: boolean;
   invalid: boolean;
@@ -72,8 +72,12 @@ export function TextField({
         <input
           {...shared}
           ref={ref as React.Ref<HTMLInputElement>}
-          type={kind === "email" ? "email" : "text"}
-          maxLength={kind === "email" ? 254 : 200}
+          type={kind}
+          // maxLength does nothing on type="number" — min + inputMode are what
+          // actually constrain it, and the latter gets the numeric keypad.
+          {...(kind === "number"
+            ? { min: 1, inputMode: "numeric" as const }
+            : { maxLength: 2000 })}
           onChange={(e) => onChange(e.target.value)}
         />
       )}
