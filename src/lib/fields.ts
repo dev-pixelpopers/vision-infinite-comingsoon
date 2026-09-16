@@ -55,11 +55,11 @@ export const FIELDS = [
   { name: "guestCount", label: "Guest count", kind: "number", required: true },
   {
     name: "coverage",
-    label: "Planned investment days",
+    label: "Planned investment",
     kind: "number",
     required: true,
   },
-  { name: "weddingPlanner", label: "Wedding Planner Name", kind: "text", autoComplete: "name" },
+  { name: "weddingPlanner", label: "Wedding Planner", kind: "text", autoComplete: "name" },
   { name: "instagram", label: "Instagram", kind: "text" },
   { name: "message", label: "Message", kind: "textarea", wide: true },
 ] as const satisfies readonly FieldDef[];

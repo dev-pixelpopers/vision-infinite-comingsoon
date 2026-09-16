@@ -10,7 +10,7 @@ import Image from "next/image";
  * Hard ceiling — if anything goes wrong, the page reveals itself anyway.
  *
  * Sized against the full script: PRELOADER_DURATION_MS + `hold` + `lift` is
- * ~15.2s, so this has to clear that with margin or the failsafe would guillotine
+ * ~32.2s, so this has to clear that with margin or the failsafe would guillotine
  * the sequence mid-line. Raise it with the script, never independently.
  */
 const FAILSAFE_MS = PRELOADER_DURATION_MS + 4_000;
@@ -27,8 +27,12 @@ export function Preloader() {
   const [ready, setReady] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [done, setDone] = useState(false);
-  /** Index into PRELOADER_CUES, or -1 for the gaps at either end. */
-  const [cue, setCue] = useState(-1);
+  /**
+   * Highest index into PRELOADER_CUES revealed so far, or -1 before the first
+   * cue fires. Lines accumulate rather than replace, so this is a high-water
+   * mark and never runs backwards.
+   */
+  const [revealed, setRevealed] = useState(-1);
 
   // Lock scrolling for as long as the overlay is up.
   useEffect(() => {
@@ -63,9 +67,9 @@ export function Preloader() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const timers = PRELOADER_CUES.map((c, i) => setTimeout(() => setCue(i), c.at));
-    // Clear the last line before the lift, so the overlay leaves empty.
-    timers.push(setTimeout(() => setCue(-1), PRELOADER_DURATION_MS));
+    // Nothing clears these: whatever is still in the window at 100% rides up
+    // with the overlay.
+    const timers = PRELOADER_CUES.map((c, i) => setTimeout(() => setRevealed(i), c.at));
 
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -140,9 +144,12 @@ export function Preloader() {
 
       <div className="preloader__script">
         {PRELOADER_CUES.map((c, i) => (
-          <p key={c.at} className={cx("preloader__line", i === cue && "is-active")}>
-            {c.text}
-          </p>
+          <div
+            key={c.at}
+            className={cx("preloader__line", i <= revealed && "is-revealed")}
+          >
+            <p>{c.text}</p>
+          </div>
         ))}
       </div>
 

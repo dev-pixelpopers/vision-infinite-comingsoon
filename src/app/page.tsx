@@ -51,7 +51,7 @@ export default function Page() {
         />
 
         <span className="reveal-wrap block">
-          <h1 className="reveal font-display text-heading font-bold uppercase text-ink">
+          <h1 className="reveal font-display text-heading uppercase text-ink">
             {INTRO_HEADING}
           </h1>
         </span>
@@ -70,7 +70,7 @@ export default function Page() {
           </p>
         </span>
 
-        <span className="reveal-wrap mt-10 block">
+        <span className="reveal-wrap overflow-visible! mt-10 block">
           <a
             className="reveal shrink-underline inline-block font-display text-heading font-bold uppercase text-ink"
             href="#contact"

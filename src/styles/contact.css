@@ -210,23 +210,19 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
 .preloader {
   position: fixed;
   inset: 0;
-  /* NOT 100vw — that includes the scrollbar gutter and creates a phantom
-     horizontal scrollbar. */
   width: 100%;
   height: 100vh;
   height: 100dvh;
-  /* Also the letterbox bars, and the pre-decode ground before the first
-     frame paints — so there is never a white flash. */
   background: var(--color-page);
-  /* Contains the video's multiply so it blends against this element's bone
-     background and never reaches through to the page beneath. */
   isolation: isolate;
   z-index: 9999;
   transform: translateY(0);
   transition: transform 0.9s cubic-bezier(0.76, 0, 0.24, 1);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 5%;
 }
 
 /* Scrim settling the foot of the frame into the page, so the script and the
@@ -313,29 +309,77 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   }
 }
 
-/* ── SCRIPT ──────────────────────────────────────────────────────────────
-   Sits in the lower third rather than dead centre, where the video's drawing
-   is. The width cap and the bottom offset together are what keep the longest
-   line clear of the counter in the bottom-right corner on a narrow screen. */
+/* ── SCRIPT ───────────────────────────────────────────────────────
+   Sits in the lower third rather than dead centre, where the drawing is. The
+   width cap and the bottom offset together are what keep the longest line
+   clear of the counter in the bottom-right corner on a narrow screen.
+
+   A ROLLING WINDOW, not a slideshow: lines accumulate, the newest always at
+   the foot of the block. Because the box is bottom-anchored with an auto
+   height, adding a line grows it UPWARD — the newest line never moves and the
+   older ones are shoved up. Past `max-height` the overflow leaves through the
+   top, where it is clipped and dissolved by the mask. None of that needs JS.
+
+   The cap is sized against the scrim on .preloader::after (34vh), NOT against
+   the logo: the scrim is the only thing making this copy legible over the
+   drawing, so the window has to stay inside it. */
 .preloader__script {
-  position: absolute;
+  /* position: absolute; */
   z-index: 2;
-  left: 0;
-  right: 0;
-  bottom: clamp(5.5rem, 14vh, 6rem);
-  max-width: 800px;
+  /* left: 0; */
+  /* right: 0; */
+  /* bottom: clamp(5.5rem, 14vh, 6rem); */
+  /* max-width: 800px; */
   margin-inline: auto;
   text-align: center;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* A FIXED height, not max-height. With max-height the box shrinks to its
+     content, which drags the mask's fade zone down onto the text itself — one
+     or two lines would sit inside the fade and be half invisible. Fixed, the
+     faded zone stays put at the top of the window and `flex-end` keeps short
+     content down at the bottom of it, well clear. */
+  /* height: clamp(7rem, 20vh, 13rem); */
+  overflow: hidden;
 }
 
-/* All five are stacked on one another and cross-faded; only `.is-active` is
-   visible. Absolute so the block never resizes as the copy changes length. */
-.preloader__line {
+/* The dissolve at the top, as a bone gradient rather than a mask on the
+   container. A mask-image here is measured against the scrollable overflow
+   area, not the 144px border box, so once the copy outgrew the window the
+   mask blanked lines that were sitting well inside it. Painting the fade
+   instead sidesteps the whole question — and bone over bone is the same
+   trick .preloader::after already uses to keep this copy off the drawing.
+
+   Absolutely positioned, so it is not a flex item and stays pinned to the
+   top edge while the lines scroll up underneath it. */
+/* .preloader__script::before {
+  content: "";
   position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  margin: 0;
+  inset: 0 0 auto 0;
+  z-index: 1;
+  height: 3.5rem;
+  background: linear-gradient(to bottom,
+      var(--color-page) 30%,
+      rgb(222 214 199 / 0));
+  pointer-events: none;
+} */
+
+/* Each line arrives by opening its own row from nothing. 0fr -> 1fr is the
+   only way to transition a height the stylesheet does not know, and the copy
+   wraps to between one and three lines depending on the cue and the viewport,
+   so measuring it in JS is exactly what this avoids.
+
+   The spacing is padding on THIS element, not on the <p>: padding inside the
+   row still counts towards the row's automatic minimum, so a collapsed line
+   would hold a ghost gap open instead of taking no room at all. Out here it
+   simply transitions from 0 alongside the row. */
+.preloader__line {
+  display: grid;
+  grid-template-rows: 0fr;
+  padding-block-start: 0;
+  opacity: 0;
   color: var(--color-ink);
   font-family: var(--font-display);
   font-weight: 600;
@@ -343,16 +387,25 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
   line-height: 1.45;
   letter-spacing: 0.04em;
   text-wrap: balance;
-  opacity: 0;
-  transform: translateY(1.25rem);
   transition:
-    opacity 0.7s ease,
-    transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+    grid-template-rows 0.7s cubic-bezier(0.76, 0, 0.24, 1),
+    padding-block-start 0.7s cubic-bezier(0.76, 0, 0.24, 1),
+    opacity 0.7s ease;
 }
 
-.preloader__line.is-active {
+.preloader__line.is-revealed {
+  grid-template-rows: 1fr;
+  padding-block-start: 10px;
   opacity: 1;
-  transform: none;
+}
+
+.preloader__line>p {
+  /* Both required for the row to actually collapse: overflow zeroes the text's
+     min-content contribution, min-height overrides the `auto` minimum a grid
+     item otherwise gets. Without them every line is on screen from frame one. */
+  overflow: hidden;
+  min-height: 0;
+  margin: 0;
 }
 
 .preloader__percent-wrap {
@@ -899,7 +952,7 @@ html[data-loaded] .reveal-stagger>*:nth-child(n + 6) .reveal {
     display: none;
   }
 
-  /* The 14s script is the whole reason this overlay lingers, so it is the
+  /* The 31s script is the whole reason this overlay lingers, so it is the
      first thing to go. Preloader.tsx also skips scheduling the cues — this
      is belt and braces for the frame before that effect runs. */
   .preloader__script {
